@@ -1,8 +1,6 @@
 package migrations
 
 import (
-	"fmt"
-
 	"code.gitea.io/sdk/gitea"
 	"github.com/google/go-github/github"
 )
