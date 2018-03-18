@@ -8,7 +8,7 @@ import (
 func (m *Migratory) Repository(gr *github.Repository) (*gitea.Repository, error) {
 	var err error
 	m.repository, err = m.Client.MigrateRepo(gitea.MigrateRepoOption{
-		Description:  *gr.Description,
+		Description:  gr.GetDescription(),
 		AuthPassword: m.AuthPassword,
 		AuthUsername: m.AuthUsername,
 		CloneAddr:    gr.GetCloneURL(),

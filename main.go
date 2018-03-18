@@ -15,6 +15,7 @@ func main() {
 	app.Description = `Migrate your GitHub repositories including issues to Gitea`
 	app.Commands = cli.Commands{
 		cmd.CmdMigrate,
+		cmd.CmdMigrateAll,
 	}
 	if err := app.Run(os.Args); err != nil {
 		panic(err)
