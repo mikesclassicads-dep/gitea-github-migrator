@@ -1,0 +1,37 @@
+workspace:
+  base: /go
+  path: src/git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator
+
+clone:
+  git:
+    image: plugins/git:1
+    depth: 50
+    tags: true
+
+pipeline:
+  deps:
+    image: golang:1.10
+    pull: true
+    environment:
+      GOPATH: /go
+    commands:
+      - go get -u github.com/golang/dep/cmd/dep
+      - dep ensure
+  static:
+    image: karalabe/xgo-latest:latest
+    pull: true
+    environment:
+      GOPATH: /go
+    commands:
+      - xgo -out gg-migrator --targets=windows/*,darwin/*
+    when:
+      event: [ tag ]
+  gitea:
+    image: plugins/gitea-release:1
+    pull: true
+    base_url: "https://git.jonasfranz.software"
+    secrets: [ gitea_token ]
+    files:
+      - gg-migrator*
+    when:
+      event: [ tag ]
