@@ -1,11 +1,13 @@
 package migrations
 
 import (
-	"code.gitea.io/sdk/gitea"
 	"fmt"
+
+	"code.gitea.io/sdk/gitea"
 	"github.com/google/go-github/github"
 )
 
+// Issue migrates a GitHub Issue to a Gitea Issue
 func (m *Migratory) Issue(gi *github.Issue) (*gitea.Issue, error) {
 	if m.migratedMilestones == nil {
 		m.migratedMilestones = make(map[int64]int64)
@@ -58,6 +60,7 @@ func (m *Migratory) labels(gls []github.Label) (results []int64, err error) {
 	return
 }
 
+// Label migrates a GitHub Label to a Gitea Label without caching its id
 func (m *Migratory) Label(gl *github.Label) (*gitea.Label, error) {
 	return m.Client.CreateLabel(m.repository.Owner.UserName, m.repository.Name,
 		gitea.CreateLabelOption{
@@ -66,6 +69,7 @@ func (m *Migratory) Label(gl *github.Label) (*gitea.Label, error) {
 		})
 }
 
+// Milestone migrates a GitHub Milesteon to a Gitea Milestone and caches its id
 func (m *Migratory) Milestone(gm *github.Milestone) (*gitea.Milestone, error) {
 	ms, err := m.Client.CreateMilestone(m.repository.Owner.UserName, m.repository.Name,
 		gitea.CreateMilestoneOption{
@@ -101,6 +105,7 @@ func githubStateToGiteaState(ghstate *string) *string {
 	return nil
 }
 
+// IssueComment migrates a GitHub IssueComment to a Gitea Comment
 func (m *Migratory) IssueComment(issue *gitea.Issue, gic *github.IssueComment) (*gitea.Comment, error) {
 	return m.Client.CreateIssueComment(m.repository.Owner.UserName,
 		m.repository.Name,

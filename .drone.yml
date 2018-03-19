@@ -17,19 +17,28 @@ pipeline:
     commands:
       - go get -u github.com/golang/dep/cmd/dep
       - dep ensure
+  test:
+    image: golang:1.10
+    pull: true
+    enviroment:
+      GOPATH: /go
+    commands:
+      - go get -u golang.org/x/lint/golint
+      - golint -set_exit_status $(go list ./...)
+      - go vet ./...
+      - go test -cover ./...
   static:
     image: karalabe/xgo-latest:latest
     pull: true
     environment:
       GOPATH: /go
     commands:
-      - mkdir releases
       - go get -u github.com/karalabe/xgo
-      - xgo -dest releases -out gitea-github-migrator -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" --targets=windows/*,darwin/*,linux/* .
+      - xgo -out gitea-github-migrator -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" --targets=windows/*,darwin/*,linux/* .
     when:
       event: [ tag ]
   gitea:
-    image: plugins/gitea-release:1
+    image: plugins/gitea-release:latest
     pull: true
     base_url: "https://git.jonasfranz.software"
     secrets: [ gitea_token ]

@@ -1,21 +1,23 @@
 package cmd
 
 import (
-	"code.gitea.io/sdk/gitea"
 	"context"
 	"fmt"
+	"sync"
+
+	"code.gitea.io/sdk/gitea"
 	"git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator/migrations"
 	"github.com/google/go-github/github"
 	"github.com/urfave/cli"
 	"golang.org/x/oauth2"
-	"sync"
 )
 
+// CmdMigrateAll is a command to migrate all repositories of an user
 var CmdMigrateAll = cli.Command{
 	Name:   "migrate-all",
 	Usage:  "migrates all repositories of an user from github to a gitea repository",
 	Action: runMigrateAll,
-	Flags: append(migrateFlags,
+	Flags: append(defaultMigrateFlags,
 		cli.StringFlag{
 			Name:   "gh-user",
 			EnvVar: "GH_USER",
@@ -66,7 +68,7 @@ func runMigrateAll(ctx *cli.Context) error {
 	for _, repo := range allRepos {
 		go func(r *github.Repository) {
 			defer wg.Done()
-			errs <- migrate(gc, c, m, r.Owner.GetLogin(), r.GetName(), ctx.Bool("only-repo"))
+			errs <- migrate(c, gc, m, r.Owner.GetLogin(), r.GetName(), ctx.Bool("only-repo"))
 		}(repo)
 	}
 

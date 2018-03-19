@@ -1,55 +1,23 @@
 package cmd
 
 import (
-	"code.gitea.io/sdk/gitea"
 	"context"
 	"fmt"
+	"strings"
+
+	"code.gitea.io/sdk/gitea"
 	"git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator/migrations"
 	"github.com/google/go-github/github"
 	"github.com/urfave/cli"
 	"golang.org/x/oauth2"
-	"strings"
 )
 
-var migrateFlags = []cli.Flag{
-	cli.IntFlag{
-		Name:   "owner",
-		Usage:  "Owner ID",
-		EnvVar: "OWNER_ID",
-		Value:  0,
-	},
-	cli.StringFlag{
-		Name:   "token",
-		Usage:  "Gitea Token",
-		EnvVar: "GITEA_TOKEN",
-	},
-	cli.StringFlag{
-		Name:   "gh-token",
-		Usage:  "GitHub Token (optional)",
-		EnvVar: "GITHUB_TOKEN",
-	},
-	cli.StringFlag{
-		Name:   "url",
-		Usage:  "Gitea URL",
-		EnvVar: "GITEA_URL",
-	},
-	cli.BoolFlag{
-		Name:   "private",
-		Usage:  "should new repository be private",
-		EnvVar: "GITEA_PRIVATE",
-	},
-	cli.BoolFlag{
-		Name:   "only-repo",
-		Usage:  "skip issues etc. and only migrate repo",
-		EnvVar: "ONLY_REPO",
-	},
-}
-
+// CmdMigrate migrates a given repository to gitea
 var CmdMigrate = cli.Command{
 	Name:   "migrate",
 	Usage:  "migrates a github to a gitea repository",
 	Action: runMigrate,
-	Flags: append(migrateFlags,
+	Flags: append(defaultMigrateFlags,
 		cli.StringFlag{
 			Name:   "gh-repo",
 			Usage:  "GitHub Repository",
@@ -80,21 +48,23 @@ func runMigrate(ctx *cli.Context) error {
 	username := strings.Split(ctx.String("gh-repo"), "/")[0]
 	repo := strings.Split(ctx.String("gh-repo"), "/")[1]
 
-	return migrate(gc, c, m, username, repo, ctx.Bool("only-repo"))
+	return migrate(c, gc, m, username, repo, ctx.Bool("only-repo"))
 }
 
-func migrate(gc *github.Client, c context.Context, m *migrations.Migratory, username, repo string, onlyRepo bool) error {
+func migrate(c context.Context, gc *github.Client, m *migrations.Migratory, username, repo string, onlyRepo bool) error {
 	fmt.Printf("Fetching repository %s/%s...\n", username, repo)
 	gr, _, err := gc.Repositories.Get(c, username, repo)
 	if err != nil {
 		return err
 	}
+
 	fmt.Printf("Migrating repository %s/%s...\n", username, repo)
-	if mr, err := m.Repository(gr); err != nil {
+	var mr *gitea.Repository
+	if mr, err = m.Repository(gr); err != nil {
 		return err
-	} else {
-		fmt.Printf("Repository migrated to %s/%s\n", mr.Owner.UserName, mr.Name)
 	}
+	fmt.Printf("Repository migrated to %s/%s\n", mr.Owner.UserName, mr.Name)
+
 	if onlyRepo {
 		return nil
 	}

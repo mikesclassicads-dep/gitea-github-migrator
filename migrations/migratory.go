@@ -2,6 +2,7 @@ package migrations
 
 import "code.gitea.io/sdk/gitea"
 
+// Migratory is the context for migrating things from GitHub to Gitea
 type Migratory struct {
 	Client       *gitea.Client
 	AuthUsername string

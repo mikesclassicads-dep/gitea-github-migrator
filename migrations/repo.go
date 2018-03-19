@@ -5,6 +5,7 @@ import (
 	"github.com/google/go-github/github"
 )
 
+// Repository migrates a GitHub Repository to a Gitea Repository without migrating issues etc.
 func (m *Migratory) Repository(gr *github.Repository) (*gitea.Repository, error) {
 	var err error
 	m.repository, err = m.Client.MigrateRepo(gitea.MigrateRepoOption{

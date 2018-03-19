@@ -1,11 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/urfave/cli"
 
-	"fmt"
 	"git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator/cmd"
 )
 
