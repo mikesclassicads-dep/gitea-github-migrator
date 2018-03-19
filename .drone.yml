@@ -24,7 +24,7 @@ pipeline:
       GOPATH: /go
     commands:
       - go get -u github.com/karalabe/xgo
-      - xgo -out gg-migrator -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" --targets=windows/*,darwin/*
+      - xgo -out gg-migrator -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" --targets=windows/*,darwin/* git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator
     when:
       event: [ tag ]
   gitea:
