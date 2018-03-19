@@ -23,8 +23,9 @@ pipeline:
     environment:
       GOPATH: /go
     commands:
+      - mkdir releases
       - go get -u github.com/karalabe/xgo
-      - xgo -out gg-migrator -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" --targets=windows/*,darwin/* git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator
+      - xgo -dest releases -out gitea-github-migrator -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" --targets=windows/*,darwin/*,linux/* .
     when:
       event: [ tag ]
   gitea:
@@ -33,6 +34,9 @@ pipeline:
     base_url: "https://git.jonasfranz.software"
     secrets: [ gitea_token ]
     files:
-      - gg-migrator*
+      - releases/*
+    checksum:
+      - sha256
+      - md5
     when:
       event: [ tag ]
