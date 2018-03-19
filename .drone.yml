@@ -34,7 +34,20 @@ pipeline:
     base_url: "https://git.jonasfranz.software"
     secrets: [ gitea_token ]
     files:
-      - releases/*
+      - gitea-github-migrator-darwin-10.6-386
+      - gitea-github-migrator-linux-amd64
+      - gitea-github-migrator-linux-arm64
+      - gitea-github-migrator-linux-mips64
+      - gitea-github-migrator-windows-4.0-386.exe
+      - gitea-github-migrator-darwin-10.6-amd64
+      - gitea-github-migrator-linux-arm-5
+      - gitea-github-migrator-linux-arm-7
+      - gitea-github-migrator-linux-mips64le
+      - gitea-github-migrator-windows-4.0-amd64.exe
+      - gitea-github-migrator-linux-386
+      - gitea-github-migrator-linux-arm-6
+      - gitea-github-migrator-linux-mips
+      - gitea-github-migrator-linux-mipsle
     checksum:
       - sha256
       - md5
