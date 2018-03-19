@@ -5,12 +5,19 @@ import (
 
 	"github.com/urfave/cli"
 
+	"fmt"
 	"git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator/cmd"
+)
+
+var (
+	version = "0.0.0"
+	build   = "0"
 )
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "gg-migrator"
+	app.Name = "gitea-github-migrator"
+	app.Version = fmt.Sprintf("%s+%s", version, build)
 	app.Usage = "GitHub to Gitea migrator for repositories"
 	app.Description = `Migrate your GitHub repositories including issues to Gitea`
 	app.Commands = cli.Commands{

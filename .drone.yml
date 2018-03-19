@@ -23,7 +23,7 @@ pipeline:
     environment:
       GOPATH: /go
     commands:
-      - xgo -out gg-migrator --targets=windows/*,darwin/*
+      - xgo -out gg-migrator -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" --targets=windows/*,darwin/*
     when:
       event: [ tag ]
   gitea:
