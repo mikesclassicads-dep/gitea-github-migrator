@@ -20,7 +20,7 @@ pipeline:
   test:
     image: golang:1.10
     pull: true
-    enviroment:
+    environment:
       GOPATH: /go
     commands:
       - go get -u golang.org/x/lint/golint
