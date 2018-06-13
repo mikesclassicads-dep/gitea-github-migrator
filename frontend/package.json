@@ -1,0 +1,42 @@
+{
+  "name": "gitea-github-migrator",
+  "version": "0.0.9",
+  "description": "Frontend for the Github -> Gitea migrator",
+  "repository": "https://git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator",
+  "author": "Jonas Franz",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "@types/react": "^16.3.16",
+    "@types/react-dom": "^16.0.6",
+    "@types/react-router-dom": "^4.2.7",
+    "portable-fetch": "^3.0.0",
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0",
+    "react-hot-loader": "^4.3.0",
+    "react-router-dom": "^4.3.1",
+    "semantic-ui-react": "^0.81.1"
+  },
+  "devDependencies": {
+    "awesome-typescript-loader": "^5.0.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "html-loader": "^0.5.5",
+    "html-webpack-plugin": "^3.2.0",
+    "source-map-loader": "^0.2.3",
+    "tslint": "^5.10.0",
+    "tslint-config-prettier": "^1.13.0",
+    "tslint-react": "^3.6.0",
+    "typescript": "^2.9.1",
+    "webpack": "^4.11.1",
+    "webpack-cli": "^3.0.2",
+    "webpack-dev-server": "^3.1.4"
+  },
+  "scripts": {
+    "start:dev": "webpack-dev-server --hot",
+    "build": "webpack --mode production",
+    "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx}'"
+  }
+}

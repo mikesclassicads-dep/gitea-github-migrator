@@ -1,0 +1,9 @@
+{
+  "extends": ["tslint:recommended", "tslint-react", "tslint-config-prettier"],
+  "rules": {
+    // override tslint-react rules here
+    "jsx-wrap-multiline": false,
+    "member-access": [true, "no-public"],
+    "jsx-boolean-value": "never"
+  }
+}

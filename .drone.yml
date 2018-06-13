@@ -9,6 +9,35 @@ clone:
     tags: true
 
 pipeline:
+  restore-cache:
+    image: drillster/drone-volume-cache
+    restore: true
+    pull: true
+    mount:
+      - ./frontend/.yarn-cache
+      - ./frontend/node_modules
+    volumes:
+      - /tmp/cache:/cache
+  install:
+    image: node:8.6.0
+    pull: true
+    commands:
+      - cd frontend/
+      - node -v
+      - npm -v
+      - yarn --version
+      - yarn config set cache-folder .yarn-cache
+      - yarn install --pure-lockfile
+  lint:
+    image: node:8.6.0
+    commands:
+      - cd frontend/
+      - yarn run lint
+  build_frontend:
+    image: node:8.6.0
+    commands:
+      - cd frontend/
+      - yarn build
   deps:
     image: golang:1.10
     pull: true
@@ -17,6 +46,8 @@ pipeline:
     commands:
       - go get -u github.com/golang/dep/cmd/dep
       - dep ensure
+  yarn:
+    image:
   test:
     image: golang:1.10
     pull: true
@@ -43,22 +74,6 @@ pipeline:
     base_url: "https://git.jonasfranz.software"
     secrets: [ gitea_token ]
     files:
-      - gitea-github-migrator-darwin-10.6-386
-      - gitea-github-migrator-linux-amd64
-      - gitea-github-migrator-linux-arm64
-      - gitea-github-migrator-linux-mips64
-      - gitea-github-migrator-windows-4.0-386.exe
-      - gitea-github-migrator-darwin-10.6-amd64
-      - gitea-github-migrator-linux-arm-5
-      - gitea-github-migrator-linux-arm-7
-      - gitea-github-migrator-linux-mips64le
-      - gitea-github-migrator-windows-4.0-amd64.exe
-      - gitea-github-migrator-linux-386
-      - gitea-github-migrator-linux-arm-6
-      - gitea-github-migrator-linux-mips
-      - gitea-github-migrator-linux-mipsle
-    checksum:
-      - sha256
-      - md5
+      - releases/*
     when:
       event: [ tag ]

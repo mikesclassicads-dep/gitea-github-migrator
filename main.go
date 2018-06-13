@@ -1,3 +1,4 @@
+//go:generate swagger generate spec -i ./swagger.yml -o ./swagger.json
 package main
 
 import (
@@ -23,6 +24,7 @@ func main() {
 	app.Commands = cli.Commands{
 		cmd.CmdMigrate,
 		cmd.CmdMigrateAll,
+		cmd.CmdWeb,
 	}
 	if err := app.Run(os.Args); err != nil {
 		panic(err)
