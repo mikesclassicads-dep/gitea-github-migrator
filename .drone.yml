@@ -28,13 +28,13 @@ pipeline:
       - go vet ./...
       - go test -cover ./...
   static:
-    image: karalabe/xgo-latest:latest
+    image: golang:1.10
     pull: true
     environment:
       GOPATH: /go
     commands:
-      - go get -u github.com/karalabe/xgo
-      - xgo -out gitea-github-migrator -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" --targets=windows/*,darwin/*,linux/* .
+      - go get -u github.com/mitchellh/gox
+      - gox -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" -output "releases/gitea-github-migrator_{{.OS}}_{{.Arch}}"
     when:
       event: [ tag ]
   gitea:
@@ -43,20 +43,7 @@ pipeline:
     base_url: "https://git.jonasfranz.software"
     secrets: [ gitea_token ]
     files:
-      - gitea-github-migrator-darwin-10.6-386
-      - gitea-github-migrator-linux-amd64
-      - gitea-github-migrator-linux-arm64
-      - gitea-github-migrator-linux-mips64
-      - gitea-github-migrator-windows-4.0-386.exe
-      - gitea-github-migrator-darwin-10.6-amd64
-      - gitea-github-migrator-linux-arm-5
-      - gitea-github-migrator-linux-arm-7
-      - gitea-github-migrator-linux-mips64le
-      - gitea-github-migrator-windows-4.0-amd64.exe
-      - gitea-github-migrator-linux-386
-      - gitea-github-migrator-linux-arm-6
-      - gitea-github-migrator-linux-mips
-      - gitea-github-migrator-linux-mipsle
+      - releases/*
     checksum:
       - sha256
       - md5
