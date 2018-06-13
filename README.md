@@ -1,10 +1,12 @@
 # gitea-github-migrator
+
 [![Build Status](https://drone.jonasfranz.software/api/badges/JonasFranzDEV/gitea-github-migrator/status.svg)](https://drone.jonasfranz.software/JonasFranzDEV/gitea-github-migrator)
 
 A tool to migrate [GitHub](https://github.com) Repositories to [Gitea](https://gitea.io) including all issues, labels, milestones
 and comments.
 
 ## Features
+
 Migrates:
 
 - [x] Repositories
@@ -28,6 +30,7 @@ go install
 ## Usage
 
 Migrate one repository:
+
 ```bash
 gitea-github-migrator migrate \
     --gh-repo owner/reponame \
@@ -36,9 +39,11 @@ gitea-github-migrator migrate \
     --token GITEA_TOKEN \
     --owner 1
 ```
-`gh-token` is only required if you have more then 50 issues / repositories.
+
+`gh-token` is only required if you have more than 50 issues / repositories.
 
 Migrate all repositories:
+
 ```bash
 gitea-github-migrator migrate-all \
     --gh-user username \
@@ -48,7 +53,8 @@ gitea-github-migrator migrate-all \
     --owner 1
 ```
 
-Migrate all repository without issues etc. (classic):
+Migrate all repositories without issues etc. (classic):
+
 ```bash
 gitea-github-migrator migrate-all \
     --gh-user username \
@@ -60,6 +66,7 @@ gitea-github-migrator migrate-all \
 ```
 
 ## Problems
-* This migrator does not work with Gitea instances utilizing a SQLite database.
-* Comments / Issues will be added by token's user (information about date and author will be added)
-* Current Date is utilized for creation date (information about date is added in a comment)
+
+- This migration tool does not work with Gitea instances using a SQLite database.
+- Comments / Issues will be added in the name of the user to whom belongs the token (information about the original date and author will be added)
+- The current date is used for creation date (information about the actual date is added in a comment)

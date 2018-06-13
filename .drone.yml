@@ -49,13 +49,13 @@ pipeline:
       - go vet ./...
       - go test -cover ./...
   static:
-    image: karalabe/xgo-latest:latest
+    image: golang:1.10
     pull: true
     environment:
       GOPATH: /go
     commands:
-      - go get -u github.com/karalabe/xgo
-      - xgo -out gitea-github-migrator -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" --targets=windows/*,darwin/*,linux/* .
+      - go get -u github.com/mitchellh/gox
+      - gox -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" -output "releases/gitea-github-migrator_{{.OS}}_{{.Arch}}"
     when:
       event: [ tag ]
   clean:
@@ -72,5 +72,8 @@ pipeline:
     secrets: [ gitea_token ]
     files:
       - releases/*
+    checksum:
+      - sha256
+      - md5
     when:
       event: [ tag ]
