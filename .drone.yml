@@ -28,7 +28,7 @@ pipeline:
     commands:
       - cd frontend/
       - yarn build
-  deps:
+  build:
     image: golang:1.10
     pull: true
     environment:
@@ -36,6 +36,8 @@ pipeline:
     commands:
       - go get -u github.com/golang/dep/cmd/dep
       - dep ensure
+      - go get -u github.com/gobuffalo/packr/...
+      - packr -z
   test:
     image: golang:1.10
     pull: true
@@ -56,6 +58,13 @@ pipeline:
       - xgo -out gitea-github-migrator -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" --targets=windows/*,darwin/*,linux/* .
     when:
       event: [ tag ]
+  clean:
+    image: golang:1.10
+    pull: true
+    environment:
+      GOPATH: /go
+    commands:
+      - packr clean
   gitea:
     image: plugins/gitea-release:latest
     pull: true

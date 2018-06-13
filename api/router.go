@@ -22,12 +22,15 @@ import (
 	"git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator/api/auth"
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
+	"github.com/gobuffalo/packr"
 )
 
 func InitRoutes() *gin.Engine {
 	r := gin.Default()
 	auth.InitOAuthConfig()
-	r.Use(static.Serve("/", static.LocalFile("./frontend", true)))
+
+	box := packr.NewBox("../frontend/dist/")
+	r.Use(static.Serve("/", &BundledFS{box}))
 	api := r.Group("/api")
 	{
 		au := api.Group("/auth")
