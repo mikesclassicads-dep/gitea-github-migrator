@@ -9,15 +9,6 @@ clone:
     tags: true
 
 pipeline:
-  restore-cache:
-    image: drillster/drone-volume-cache
-    restore: true
-    pull: true
-    mount:
-      - ./frontend/.yarn-cache
-      - ./frontend/node_modules
-    volumes:
-      - /tmp/cache:/cache
   install:
     image: node:8.6.0
     pull: true
@@ -26,7 +17,6 @@ pipeline:
       - node -v
       - npm -v
       - yarn --version
-      - yarn config set cache-folder .yarn-cache
       - yarn install --pure-lockfile
   lint:
     image: node:8.6.0
