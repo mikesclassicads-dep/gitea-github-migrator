@@ -25,6 +25,9 @@
     "babel-preset-react": "^6.24.1",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
+    "husky": "^0.14.3",
+    "prettier": "1.13.5",
+    "pretty-quick": "^1.6.0",
     "source-map-loader": "^0.2.3",
     "tslint": "^5.10.0",
     "tslint-config-prettier": "^1.13.0",
@@ -37,6 +40,7 @@
   "scripts": {
     "start:dev": "webpack-dev-server --hot",
     "build": "webpack --mode production",
-    "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx}'"
+    "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx}'",
+    "precommit": "pretty-quick --staged"
   }
 }
