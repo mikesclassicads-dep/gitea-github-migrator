@@ -23,18 +23,14 @@ pipeline:
     environment:
       GOPATH: /go
     commands:
-      - go get -u golang.org/x/lint/golint
-      - golint -set_exit_status $(go list ./...)
-      - go vet ./...
-      - go test -cover ./...
+      - make test
   static:
     image: golang:1.10
     pull: true
     environment:
       GOPATH: /go
     commands:
-      - go get -u github.com/mitchellh/gox
-      - gox -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" -output "releases/gitea-github-migrator_{{.OS}}_{{.Arch}}"
+      - make release
     when:
       event: [ tag ]
   gitea:
