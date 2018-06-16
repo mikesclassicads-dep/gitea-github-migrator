@@ -1,0 +1,22 @@
+{{template "base/head" .}}
+<div class="ui middle aligned center aligned grid">
+    <div class="column">
+        <h1 class="ui image header">
+            <div class="content">
+                Gitea Migrator
+            </div>
+        </h1>
+        <div class="ui message">
+            Migrate all your GitHub repositories to your Gitea instance including all issues, labels and milestones.
+        </div>
+        <form class="ui large form">
+            <div class="ui stacked segment">
+                <a href="/github" class="ui fluid large green submit labeled icon button"><i class="icon github"></i> Login with GitHub</a>
+            </div>
+
+            <div class="ui error message"></div>
+
+        </form>
+    </div>
+</div>
+{{template "base/footer" .}}

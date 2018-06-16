@@ -5,7 +5,7 @@
   branch = "master"
   name = "code.gitea.io/sdk"
   packages = ["gitea"]
-  revision = "39c609e903992e25deca0e7aa2c5304fd680530f"
+  revision = "b2308e3f700875a3642a78bd3f6e5db8ef6f974d"
 
 [[projects]]
   name = "github.com/BurntSushi/toml"
@@ -14,26 +14,28 @@
   version = "v0.3.0"
 
 [[projects]]
-  branch = "master"
-  name = "github.com/gin-contrib/sse"
+  name = "github.com/Unknwon/com"
   packages = ["."]
-  revision = "22d885f9ecc78bf4ee5d72b937e4bbcdc58e8cae"
+  revision = "7677a1d7c1137cd3dd5ba7a076d0c898a1ef4520"
+  version = "master"
 
 [[projects]]
   branch = "master"
-  name = "github.com/gin-gonic/contrib"
-  packages = ["static"]
-  revision = "6ea35d32286ce194572a0dc2a3398aac0091228d"
+  name = "github.com/adam-hanna/randomstrings"
+  packages = ["."]
+  revision = "88fd7c52a2c704c5d530718c1be454292a806e2b"
 
 [[projects]]
-  name = "github.com/gin-gonic/gin"
-  packages = [
-    ".",
-    "binding",
-    "render"
-  ]
-  revision = "d459835d2b077e44f7c9b453505ee29881d5d12d"
-  version = "v1.2"
+  branch = "master"
+  name = "github.com/go-macaron/inject"
+  packages = ["."]
+  revision = "d8a0b8677191f4380287cfebd08e462217bac7ad"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/go-macaron/session"
+  packages = ["."]
+  revision = "b8e286a0dba8f4999042d6b258daf51b31d08938"
 
 [[projects]]
   name = "github.com/gobuffalo/packr"
@@ -44,8 +46,8 @@
 [[projects]]
   name = "github.com/golang/protobuf"
   packages = ["proto"]
-  revision = "925541529c1fa6821df4e44ce2723319eb2be768"
-  version = "v1.0.0"
+  revision = "b4deda0973fb4c70b50d226b1af49f3da59f5265"
+  version = "v1.1.0"
 
 [[projects]]
   name = "github.com/google/go-github"
@@ -63,25 +65,13 @@
   branch = "master"
   name = "github.com/jinzhu/configor"
   packages = ["."]
-  revision = "ec34f328956f53dfbd06e9f5306e37e6943443c3"
-
-[[projects]]
-  name = "github.com/mattn/go-isatty"
-  packages = ["."]
-  revision = "0360b2af4f38e8d38c7fce2a9f4e702702d73a39"
-  version = "v0.0.3"
+  revision = "4edaf76fe18865e36de734d887f4c01bd05707af"
 
 [[projects]]
   name = "github.com/pkg/errors"
   packages = ["."]
   revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
   version = "v0.8.0"
-
-[[projects]]
-  name = "github.com/ugorji/go"
-  packages = ["codec"]
-  revision = "b4c50a2b199d93b13dc15e78929cfb23bfdf21ab"
-  version = "v1.1.1"
 
 [[projects]]
   name = "github.com/urfave/cli"
@@ -91,12 +81,18 @@
 
 [[projects]]
   branch = "master"
+  name = "golang.org/x/crypto"
+  packages = ["pbkdf2"]
+  revision = "a8fb68e7206f8c78be19b432c58eb52a6aa34462"
+
+[[projects]]
+  branch = "master"
   name = "golang.org/x/net"
   packages = [
     "context",
     "context/ctxhttp"
   ]
-  revision = "24dd3780ca4f75fed9f321890729414a4b5d3f13"
+  revision = "db08ff08e8622530d9ed3a0e8ac279f6d4c02196"
 
 [[projects]]
   branch = "master"
@@ -106,13 +102,7 @@
     "github",
     "internal"
   ]
-  revision = "fdc9e635145ae97e6c2cb777c48305600cf515cb"
-
-[[projects]]
-  branch = "master"
-  name = "golang.org/x/sys"
-  packages = ["unix"]
-  revision = "bff228c7b664c5fce602223a05fb708fd8654986"
+  revision = "1e0a3fa8ba9a5c9eb35c271780101fdaf1b205d7"
 
 [[projects]]
   name = "google.golang.org/appengine"
@@ -125,14 +115,20 @@
     "internal/urlfetch",
     "urlfetch"
   ]
-  revision = "150dc57a1b433e64154302bdc40b6bb8aefa313a"
-  version = "v1.0.0"
+  revision = "b1f26356af11148e710935ed1ac8a7f5702c7612"
+  version = "v1.1.0"
 
 [[projects]]
-  name = "gopkg.in/go-playground/validator.v8"
+  name = "gopkg.in/ini.v1"
   packages = ["."]
-  revision = "5f1438d3fca68893a817e4a66806cea46a9e4ebf"
-  version = "v8.18.2"
+  revision = "06f5f3d67269ccec1fe5fe4134ba6e982984f7f5"
+  version = "v1.37.0"
+
+[[projects]]
+  name = "gopkg.in/macaron.v1"
+  packages = ["."]
+  revision = "c1be95e6d21e769e44e1ec33cec9da5837861c10"
+  version = "v1.3.1"
 
 [[projects]]
   name = "gopkg.in/yaml.v2"
@@ -143,6 +139,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "4a75dbc846a83d2e7c1a0d840da062e06835663a2a4a60225d41ee22a89db840"
+  inputs-digest = "88f88bb5625ff2b06fff92a8a4c8ddebb4a393c05dc4b9ecbf02d0079aab79c3"
   solver-name = "gps-cdcl"
   solver-version = 1
