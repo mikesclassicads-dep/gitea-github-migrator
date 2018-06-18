@@ -61,6 +61,5 @@ gitea-github-migrator migrate-all \
 ```
 
 ## Problems
-* This migration tool does not work with Gitea instances using a SQLite database.
 * Comments / Issues will be added in the name of the user to whom belongs the token (information about the original date and author will be added)
 * The current date is used for creation date (information about the actual date is added in a comment)
