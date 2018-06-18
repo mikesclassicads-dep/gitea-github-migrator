@@ -45,3 +45,11 @@ pipeline:
       - md5
     when:
       event: [ tag ]
+  docker:
+    image: plugins/docker:17.12
+    secrets: [ docker_username, docker_password ]
+    pull: true
+    repo: jonasfranz/gitea-github-migrator
+    default_tags: true
+    when:
+      event: [ push, tag ]

@@ -18,6 +18,10 @@ LDFLAGS := -X main.Version=$(VERSION) -X main.build=$(BUILD)
 .PHONY: all
 all:
 
+.PHONY: docker-binary
+docker-binary:
+	go build -ldflags "$(LDFLAGS)" -o gitea-github-migrator
+
 .PHONY: release
 release:
 	@hash gox > /dev/null 2>&1; if [ $$? -ne 0 ]; then \
