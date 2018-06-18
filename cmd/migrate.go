@@ -94,8 +94,13 @@ func migrate(c context.Context, gc *github.Client, m *migrations.Migratory, user
 	//bar := p.AddBar(int64(len(issues)))
 	for _, gi := range allIssues {
 		fmt.Printf("Migrating #%d...\n", *gi.Number)
+	retry:
 		issue, err := m.Issue(gi)
 		if err != nil {
+			if strings.Contains(err.Error(), "database table is locked") {
+				fmt.Printf("Retring #%d since db table is locked\n", *gi.Number)
+				goto retry
+			}
 			return fmt.Errorf("migrating issue[id: %d]: %v", *gi.ID, err)
 		}
 		comments, _, err := gc.Issues.ListComments(c, username, repo, gi.GetNumber(), nil)
@@ -104,7 +109,12 @@ func migrate(c context.Context, gc *github.Client, m *migrations.Migratory, user
 		}
 		for _, gc := range comments {
 			fmt.Printf("-> %d...", gc.ID)
+		retry_comment:
 			if _, err := m.IssueComment(issue, gc); err != nil {
+				if strings.Contains(err.Error(), "database table is locked") {
+					fmt.Printf("Retring comment #%d since db table is locked\n", gc.GetID())
+					goto retry_comment
+				}
 				return fmt.Errorf("migrating issue comment [issue: %d, comment: %d]: %v", *gi.ID, gc.ID, err)
 			}
 			fmt.Print("Done!\n")
