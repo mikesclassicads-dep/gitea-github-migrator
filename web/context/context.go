@@ -16,9 +16,10 @@ type Context struct {
 	Flash   *session.Flash
 	Session session.Store
 
-	Client *github.Client
-	User   *User
-	Link   string // current request URL
+	Client    *github.Client
+	User      *User //GitHub user
+	GiteaUser *User
+	Link      string // current request URL
 }
 
 type User struct {
@@ -67,6 +68,11 @@ func Contexter() macaron.Handler {
 		if usr != nil {
 			ctx.User = usr.(*User)
 			ctx.Data["User"] = ctx.User
+		}
+		gitea_usr := sess.Get("gitea_user")
+		if gitea_usr != nil {
+			ctx.GiteaUser = gitea_usr.(*User)
+			ctx.Data["GiteaUser"] = ctx.GiteaUser
 		}
 		c.Map(ctx)
 	}

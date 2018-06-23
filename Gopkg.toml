@@ -30,8 +30,9 @@
   unused-packages = true
 
 [[constraint]]
-  branch = "master"
+  branch = "myuserinfo"
   name = "code.gitea.io/sdk"
+  source = "github.com/JonasFranzDEV/go-sdk"
 
 [[constraint]]
   name = "github.com/urfave/cli"
@@ -60,3 +61,7 @@
 [[constraint]]
   branch = "master"
   name = "github.com/go-macaron/session"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/go-macaron/binding"

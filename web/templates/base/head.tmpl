@@ -66,3 +66,6 @@
     </script>
 </head>
 <body>
+{{if .Flash.ErrorMsg}}
+    <div class="ui error message">{{.Flash.ErrorMsg}}</div>
+{{end}}

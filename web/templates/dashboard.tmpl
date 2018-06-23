@@ -1,0 +1,32 @@
+{{template "base/head" .}}
+<div class="ui middle aligned center aligned grid">
+    <div class="column">
+        <h1 class="ui image header">
+            <div class="content">
+                Gitea Migrator
+            </div>
+        </h1>
+        <div class="ui message">
+            You've connected your GitHub and Gitea account.
+        </div>
+        <div class="ui icon message">
+            <i class="icon github"></i>
+            <div class="content">
+                <h3 class="header">GitHub connected</h3>
+                You're logged in as <code>{{.User.Username}}</code>. <a href="/logout">Not you?</a>
+            </div>
+        </div>
+        <div class="ui icon attached message">
+            <i class="icon lock"></i>
+            <div class="content">
+                <h3 class="header">Gitea connected</h3>
+                You're logged in as <code>{{.GiteaUser.Username}}</code>. <a href="/logout">Not you?</a>
+            </div>
+        </div>
+
+        <div class="ui stacked segment">
+            <button class="ui fluid large green labeld icon button"><i class="icon list"></i> Migrate Repositories...</button>
+        </div>
+    </div>
+</div>
+{{template "base/footer" .}}

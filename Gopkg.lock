@@ -2,10 +2,11 @@
 
 
 [[projects]]
-  branch = "master"
+  branch = "myuserinfo"
   name = "code.gitea.io/sdk"
   packages = ["gitea"]
-  revision = "b2308e3f700875a3642a78bd3f6e5db8ef6f974d"
+  revision = "6c33946d3f5b59646286ec6d6f02e88de690a1b3"
+  source = "github.com/JonasFranzDEV/go-sdk"
 
 [[projects]]
   name = "github.com/BurntSushi/toml"
@@ -24,6 +25,12 @@
   name = "github.com/adam-hanna/randomstrings"
   packages = ["."]
   revision = "88fd7c52a2c704c5d530718c1be454292a806e2b"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/go-macaron/binding"
+  packages = ["."]
+  revision = "ac54ee249c27dca7e76fad851a4a04b73bd1b183"
 
 [[projects]]
   branch = "master"
@@ -139,6 +146,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "88f88bb5625ff2b06fff92a8a4c8ddebb4a393c05dc4b9ecbf02d0079aab79c3"
+  inputs-digest = "10db78bccc75a090bb1e23467c4f5d6abb8bd3b4b158e4b684550539d23565c9"
   solver-name = "gps-cdcl"
   solver-version = 1
