@@ -1,6 +1,8 @@
 # gitea-github-migrator
 
 [![Build Status](https://drone.jonasfranz.software/api/badges/JonasFranzDEV/gitea-github-migrator/status.svg)](https://drone.jonasfranz.software/JonasFranzDEV/gitea-github-migrator)
+[![Latest Release](https://img.shields.io/badge/dynamic/json.svg?label=release&url=https%3A%2F%2Fgit.jonasfranz.software%2Fapi%2Fv1%2Frepos%2FJonasFranzDEV%2Fgitea-github-migrator%2Freleases&query=%24%5B0%5D.tag_name)](https://git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator/releases)
+[![Docker Pulls](https://img.shields.io/docker/pulls/jonasfranz/gitea-github-migrator.svg)](https://hub.docker.com/r/jonasfranz/gitea-github-migrator/)
 
 A tool to migrate [GitHub](https://github.com) Repositories to [Gitea](https://gitea.io) including all issues, labels, milestones
 and comments.
