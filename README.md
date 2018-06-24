@@ -15,10 +15,12 @@ Migrates:
 - [x] Milestones
 - [x] Comments
 - [ ] Users
-- [ ] Pull Requests
+- [x] Pull Requests (as issue)
 - [ ] Statuses
 
 ## Installation
+
+### From source
 
 ```bash
 go get git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator
@@ -27,6 +29,12 @@ dep ensure
 go install
 ```
 
+### From Binary
+We provide binaries of master builds and all releases at our [minio storage server](https://storage.h.jonasfranz.software/minio/gitea-github-migrator/dist/).
+
+Additionally we provide them for every release as release attachment under [releases](https://git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator/releases).
+
+You don't need any dependencies except the binary to run the migrator.
 ## Usage
 
 Migrate one repository:
