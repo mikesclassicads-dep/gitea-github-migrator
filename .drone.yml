@@ -82,3 +82,8 @@ pipeline:
     endpoint: https://storage.h.jonasfranz.software
     when:
       event: [ tag ]
+
+services:
+  gitea:
+    image: jonasfranz/gitea-service
+    pull: true

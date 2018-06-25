@@ -96,6 +96,7 @@ func githubStateToGiteaState(ghstate *string) *string {
 	}
 	switch *ghstate {
 	case "open":
+		fallthrough
 	case "closed":
 		return ghstate
 	case "all":

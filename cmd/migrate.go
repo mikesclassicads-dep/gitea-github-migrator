@@ -55,13 +55,13 @@ func migrate(c context.Context, gc *github.Client, m *migrations.Migratory, user
 	fmt.Printf("Fetching repository %s/%s...\n", username, repo)
 	gr, _, err := gc.Repositories.Get(c, username, repo)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while fetching repo[%s/%s]: %v", username, repo, err)
 	}
 
 	fmt.Printf("Migrating repository %s/%s...\n", username, repo)
 	var mr *gitea.Repository
 	if mr, err = m.Repository(gr); err != nil {
-		return err
+		return fmt.Errorf("error while migrating repo[%s/%s]: %v", username, repo, err)
 	}
 	fmt.Printf("Repository migrated to %s/%s\n", mr.Owner.UserName, mr.Name)
 
@@ -82,7 +82,7 @@ func migrate(c context.Context, gc *github.Client, m *migrations.Migratory, user
 	for {
 		issues, resp, err := gc.Issues.ListByRepo(c, username, repo, opt)
 		if err != nil {
-			return err
+			return fmt.Errorf("error while listing repos: %v", err)
 		}
 		allIssues = append(allIssues, issues...)
 		if resp.NextPage == 0 {
@@ -91,7 +91,6 @@ func migrate(c context.Context, gc *github.Client, m *migrations.Migratory, user
 		opt.Page = resp.NextPage
 	}
 	fmt.Println("Migrating issues...")
-	//bar := p.AddBar(int64(len(issues)))
 	for _, gi := range allIssues {
 		fmt.Printf("Migrating #%d...\n", *gi.Number)
 		issue, err := m.Issue(gi)
@@ -110,7 +109,6 @@ func migrate(c context.Context, gc *github.Client, m *migrations.Migratory, user
 			fmt.Print("Done!\n")
 		}
 		fmt.Printf("Migrated #%d...\n", *gi.Number)
-		//bar.Increment()
 
 	}
 	return nil
