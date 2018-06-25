@@ -1,7 +1,6 @@
 IMPORT := git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator
 GO ?= go
 
-BUILD=$(or ${DRONE_BUILD_NUMBER},${DRONE_BUILD_NUMBER},0)
 
 ifneq ($(DRONE_TAG),)
 	VERSION ?= $(subst v,,$(DRONE_TAG))
@@ -13,7 +12,7 @@ else
 	endif
 endif
 
-LDFLAGS := -X main.Version=$(VERSION) -X main.build=$(BUILD)
+LDFLAGS := -X main.version=$(VERSION) -X main.build=$(DRONE_BUILD_NUMBER)
 
 .PHONY: all
 all:
