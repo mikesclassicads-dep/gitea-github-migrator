@@ -5,6 +5,7 @@ import (
 
 	"git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator/web/auth"
 	"git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator/web/context"
+	"git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator/web/migration"
 	"github.com/go-macaron/binding"
 	"github.com/go-macaron/session"
 	"github.com/gobuffalo/packr"
@@ -31,6 +32,8 @@ func InitRoutes() *macaron.Macaron {
 		FileSystem: publicBox,
 	}, ""))
 	m.Use(context.Contexter())
+
+	// BEGIN: Router
 	m.Get("/", func(ctx *context.Context) {
 		if ctx.User != nil {
 			if ctx.GiteaUser == nil {
@@ -53,5 +56,12 @@ func InitRoutes() *macaron.Macaron {
 	m.Group("/gitea", func() {
 		m.Post("/", binding.BindIgnErr(auth.GiteaLoginForm{}), auth.LoginToGitea)
 	})
+	m.Get("/repos", reqSignIn, migration.ListRepos)
 	return m
+}
+
+func reqSignIn(ctx *context.Context) {
+	if ctx.User == nil || ctx.GiteaUser == nil {
+		ctx.Redirect("/")
+	}
 }

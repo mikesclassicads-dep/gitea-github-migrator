@@ -5,6 +5,7 @@ import (
 	"git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator/web/context"
 )
 
+// GiteaLoginForm represents the data required for logging in into gitea
 type GiteaLoginForm struct {
 	Username    string `form:"username"`
 	Password    string `form:"password"`
@@ -13,6 +14,7 @@ type GiteaLoginForm struct {
 	Type        string `form:"use" binding:"Required;In(token,password)"`
 }
 
+// LoginToGitea handles the POST request for signing in with a Gitea account
 func LoginToGitea(ctx *context.Context, form GiteaLoginForm) {
 	var token string
 	if form.Type == "password" {

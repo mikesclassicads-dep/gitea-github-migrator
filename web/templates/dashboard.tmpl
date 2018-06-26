@@ -13,19 +13,19 @@
             <i class="icon github"></i>
             <div class="content">
                 <h3 class="header">GitHub connected</h3>
-                You're logged in as <code>{{.User.Username}}</code>. <a href="/logout">Not you?</a>
+                You're logged in as {{template "modules/username" .User}}. <a href="/logout">Not you?</a>
             </div>
         </div>
         <div class="ui icon attached message">
             <i class="icon lock"></i>
             <div class="content">
                 <h3 class="header">Gitea connected</h3>
-                You're logged in as <code>{{.GiteaUser.Username}}</code>. <a href="/logout">Not you?</a>
+                You're logged in as {{template "modules/username" .GiteaUser}}. <a href="/logout">Not you?</a>
             </div>
         </div>
 
         <div class="ui stacked segment">
-            <button class="ui fluid large green labeld icon button"><i class="icon list"></i> Migrate Repositories...</button>
+            <a href="/repos" class="ui fluid large green labeld icon button"><i class="icon list"></i> Migrate Repositories...</a>
         </div>
     </div>
 </div>

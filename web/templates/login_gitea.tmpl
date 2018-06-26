@@ -13,7 +13,7 @@
             <i class="icon github"></i>
             <div class="content">
                 <h3 class="header">GitHub connected</h3>
-                You're logged in as <code>{{.User.Username}}</code>. <a href="/logout">Not you?</a>
+                You're logged in as {{template "modules/username" .User}}. <a href="/logout">Not you?</a>
             </div>
         </div>
         <div class="ui icon attached message">

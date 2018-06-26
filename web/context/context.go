@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"strings"
 
+	bgctx "context"
 	"git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator/config"
 	"github.com/go-macaron/session"
 	"github.com/google/go-github/github"
+	"golang.org/x/oauth2"
 	"gopkg.in/macaron.v1"
 )
 
@@ -22,12 +24,14 @@ type Context struct {
 	Link      string // current request URL
 }
 
+// User is an abstraction of a Gitea or GitHub user, saving the required information
 type User struct {
 	Username  string
 	AvatarURL string
 	Token     string
 }
 
+// Handle displays the corresponding error message
 func (ctx *Context) Handle(status int, title string, err error) {
 	if err != nil {
 		if macaron.Env != macaron.PROD {
@@ -48,6 +52,7 @@ func (ctx *Context) Handle(status int, title string, err error) {
 	ctx.Context.HTML(status, fmt.Sprintf("status/%d", status))
 }
 
+// Contexter injects context.Context into macaron
 func Contexter() macaron.Handler {
 	return func(c *macaron.Context, sess session.Store, f *session.Flash) {
 		ctx := &Context{
@@ -69,10 +74,16 @@ func Contexter() macaron.Handler {
 			ctx.User = usr.(*User)
 			ctx.Data["User"] = ctx.User
 		}
-		gitea_usr := sess.Get("gitea_user")
-		if gitea_usr != nil {
-			ctx.GiteaUser = gitea_usr.(*User)
+		giteaUsr := sess.Get("gitea_user")
+		if giteaUsr != nil {
+			ctx.GiteaUser = giteaUsr.(*User)
 			ctx.Data["GiteaUser"] = ctx.GiteaUser
+		}
+		if ctx.User != nil && ctx.User.Token != "" {
+			tc := oauth2.NewClient(bgctx.Background(), oauth2.StaticTokenSource(&oauth2.Token{AccessToken: ctx.User.Token}))
+			ctx.Client = github.NewClient(tc)
+		} else {
+			ctx.Client = github.NewClient(nil)
 		}
 		c.Map(ctx)
 	}
