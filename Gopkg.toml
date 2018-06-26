@@ -3,9 +3,8 @@
   unused-packages = true
 
 [[constraint]]
-  branch = "myuserinfo"
+  branch = "master"
   name = "code.gitea.io/sdk"
-  source = "github.com/JonasFranzDEV/go-sdk"
 
 [[constraint]]
   name = "github.com/urfave/cli"
@@ -14,6 +13,9 @@
 [[constraint]]
   name = "github.com/google/go-github"
   version = "15.0.0"
+[[constraint]]
+  name = "github.com/stretchr/testify"
+  version = "1.2.2"
 
 [[constraint]]
   branch = "master"

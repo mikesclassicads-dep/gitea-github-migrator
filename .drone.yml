@@ -9,26 +9,7 @@ clone:
     tags: true
 
 pipeline:
-  install:
-    image: node:8.6.0
-    pull: true
-    commands:
-      - cd frontend/
-      - node -v
-      - npm -v
-      - yarn --version
-      - yarn install --pure-lockfile
-  lint:
-    image: node:8.6.0
-    commands:
-      - cd frontend/
-      - yarn run lint
-  build_frontend:
-    image: node:8.6.0
-    commands:
-      - cd frontend/
-      - yarn build
-  build:
+  deps:
     image: golang:1.10
     pull: true
     environment:
@@ -53,7 +34,8 @@ pipeline:
     commands:
       - make release
     when:
-      event: [ tag ]
+      event: [ push, tag ]
+      branch: [ master ]
   clean:
     image: golang:1.10
     pull: true
@@ -82,3 +64,35 @@ pipeline:
     when:
       event: [ push, tag ]
       branch: [ master ]
+  s3:
+    image: plugins/s3:1
+    pull: true
+    secrets: [ aws_access_key_id, aws_secret_access_key ]
+    bucket: gitea-github-migrator
+    path_style: true
+    acl: public-read
+    source: releases/*
+    target: dist/master
+    strip_prefix: releases/
+    endpoint: https://storage.h.jonasfranz.software
+    when:
+      event: [ push ]
+      branch: [ master ]
+  s3:
+    image: plugins/s3:1
+    pull: true
+    secrets: [ aws_access_key_id, aws_secret_access_key ]
+    bucket: gitea-github-migrator
+    path_style: true
+    acl: public-read
+    source: releases/*
+    target: dist/${DRONE_TAG##v}
+    strip_prefix: releases/
+    endpoint: https://storage.h.jonasfranz.software
+    when:
+      event: [ tag ]
+
+services:
+  gitea:
+    image: jonasfranz/gitea-service
+    pull: true
