@@ -32,8 +32,17 @@ pipeline:
     commands:
       - make generate-release-file release
     when:
-      event: [ push, tag ]
+      event: [ push ]
       branch: [ master ]
+  static:
+    image: golang:1.10
+    pull: true
+    environment:
+      GOPATH: /go
+    commands:
+      - make generate-release-file release
+    when:
+      event: [ tag ]
   gitea:
     image: plugins/gitea-release:latest
     pull: true
