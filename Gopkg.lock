@@ -5,7 +5,7 @@
   branch = "master"
   name = "code.gitea.io/sdk"
   packages = ["gitea"]
-  revision = "39c609e903992e25deca0e7aa2c5304fd680530f"
+  revision = "79a281c4e34ae44cf96a23f0283729a074a6c2a0"
 
 [[projects]]
   name = "github.com/davecgh/go-spew"
@@ -38,19 +38,8 @@
   version = "v1.0.0"
 
 [[projects]]
-  name = "github.com/stretchr/objx"
-  packages = ["."]
-  revision = "477a77ecc69700c7cdeb1fa9e129548e1c1c393c"
-  version = "v0.1.1"
-
-[[projects]]
   name = "github.com/stretchr/testify"
-  packages = [
-    ".",
-    "assert",
-    "http",
-    "mock"
-  ]
+  packages = ["assert"]
   revision = "f35b8ab0b5a2cef36673838d662e249dd9c94686"
   version = "v1.2.2"
 
@@ -95,6 +84,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "884bf618611f0aaad19defa64a14fa70fd2b522afe8cf99dedbfada2a9d8b88d"
+  inputs-digest = "a63a8945bd36ecc14dfbb7f9894543855f9e9e2e493dfdb77c06b4a12aada8a4"
   solver-name = "gps-cdcl"
   solver-version = 1

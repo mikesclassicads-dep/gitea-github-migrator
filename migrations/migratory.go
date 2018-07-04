@@ -9,7 +9,7 @@ type Migratory struct {
 	AuthPassword string
 
 	Private    bool
-	NewOwnerID int
+	NewOwnerID int64
 
 	repository *gitea.Repository
 	// key: github milestone id | value: gitea milestone id

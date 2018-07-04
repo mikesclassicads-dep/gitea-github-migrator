@@ -14,7 +14,7 @@ func (m *Migratory) Repository(gr *github.Repository) (*gitea.Repository, error)
 		AuthUsername: m.AuthUsername,
 		CloneAddr:    gr.GetCloneURL(),
 		RepoName:     gr.GetName(),
-		UID:          m.NewOwnerID,
+		UID:          int(m.NewOwnerID),
 		Private:      m.Private,
 	})
 	return m.repository, err

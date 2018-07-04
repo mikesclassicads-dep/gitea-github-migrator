@@ -31,7 +31,14 @@ func runMigrate(ctx *cli.Context) error {
 	m := &migrations.Migratory{
 		Client:     gitea.NewClient(ctx.String("url"), ctx.String("token")),
 		Private:    ctx.Bool("private"),
-		NewOwnerID: ctx.Int("owner"),
+		NewOwnerID: ctx.Int64("owner"),
+	}
+	if m.NewOwnerID == 0 {
+		usr, err := m.Client.GetMyUserInfo()
+		if err != nil {
+			return fmt.Errorf("cannot fetch user info about current user: %v", err)
+		}
+		m.NewOwnerID = usr.ID
 	}
 	c := context.Background()
 	var gc *github.Client
