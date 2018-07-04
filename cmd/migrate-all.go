@@ -65,6 +65,13 @@ func runMigrateAll(ctx *cli.Context) error {
 		PullRequests: !onlyRepos,
 		Strategy:     migrations.Classic,
 	}, gitea.NewClient(ctx.String("url"), ctx.String("token")), gc)
+	if job.Options.NewOwnerID == 0 {
+		usr, err := job.Client.GetMyUserInfo()
+		if err != nil {
+			return fmt.Errorf("cannot fetch user info about current user: %v", err)
+		}
+		job.Options.NewOwnerID = int(usr.ID)
+	}
 	for _, repo := range allRepos {
 		job.Repositories = append(job.Repositories, repo.GetFullName())
 	}

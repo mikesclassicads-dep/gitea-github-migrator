@@ -50,6 +50,13 @@ func runMigrate(ctx *cli.Context) error {
 		PullRequests: !onlyRepos,
 		Strategy:     migrations.Classic,
 	}, gitea.NewClient(ctx.String("url"), ctx.String("token")), gc, ctx.String("gh-repo"))
+	if job.Options.NewOwnerID == 0 {
+		usr, err := job.Client.GetMyUserInfo()
+		if err != nil {
+			return fmt.Errorf("cannot fetch user info about current user: %v", err)
+		}
+		job.Options.NewOwnerID = int(usr.ID)
+	}
 	errs := job.StartMigration()
 	for err := range errs {
 		if err != nil {
