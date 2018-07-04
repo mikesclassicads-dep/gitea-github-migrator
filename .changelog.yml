@@ -1,0 +1,9 @@
+## ENHANCEMENTS
+*  Fetch user if no --owner is given
+
+## BUILD
+
+* Add docker release
+* Add tests
+* Add makefile
+* Add S3 distrubution

@@ -21,6 +21,10 @@ all:
 docker-binary:
 	go build -ldflags "$(LDFLAGS)" -o gitea-github-migrator
 
+.PHONY: generate-release-file
+generate-release-file:
+	echo $(VERSION) > .version
+
 .PHONY: release
 release:
 	@hash gox > /dev/null 2>&1; if [ $$? -ne 0 ]; then \

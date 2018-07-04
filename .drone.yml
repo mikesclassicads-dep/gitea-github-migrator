@@ -30,7 +30,7 @@ pipeline:
     environment:
       GOPATH: /go
     commands:
-      - make release
+      - make generate-release-file release
     when:
       event: [ push, tag ]
       branch: [ master ]
@@ -39,6 +39,8 @@ pipeline:
     pull: true
     base_url: "https://git.jonasfranz.software"
     secrets: [ gitea_token ]
+    title: .version
+    note: .changelog.yml
     files:
       - releases/*
     checksum:
