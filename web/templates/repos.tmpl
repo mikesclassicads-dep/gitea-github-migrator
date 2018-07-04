@@ -1,4 +1,5 @@
 {{template "base/head" .}}
+<script src="static/js/select-repos.js"></script>
 <div class="ui middle aligned center aligned grid">
     <div class="column">
         <h1 class="ui image header">
@@ -10,7 +11,7 @@
             Select the repositories you'd like to migrate.
         </div>
         <div class="ui stacked segment">
-            <form action="/migrate" method="POST">
+            <form action="/repos" method="POST">
                 <div class="ui horizontal link list">
                     <a class="item" onclick="$('.repo-toggle').prop('checked', true);">
                         Select all
@@ -19,7 +20,7 @@
                         Deselect all
                     </a>
                 </div>
-                <div class="ui relaxed divided list">
+                <div class="ui relaxed divided list" id="repo-list">
                 {{range .Repos}}
                     <div class="item">
                         <i class="large github middle aligned icon"></i>
@@ -32,7 +33,7 @@
                     </div>
                 {{end}}
                 </div>
-                <button type="button" class="ui fluid large labeled icon button"><i class="icon add"></i> Add other repositories...</button>
+                <button type="button" onclick="openSelectRepoModal();" id="open-other-btn" class="ui fluid large labeled icon button"><i class="icon add"></i> Add other repositories...</button>
                 <div class="ui divider"></div>
                 <button type="submit" class="ui fluid large green labeled icon button"><i class="icon exchange"></i> Migrate selected repositories...</button>
             </form>
@@ -45,8 +46,8 @@
         <i class="large github middle aligned icon"></i>
         <div class="content">
             <div class="ui left toggle checkbox">
-                <input id="{{.GetFullName}}" name="{{.GetFullName}}" type="checkbox">
-                <label for="{{.GetFullName}}"><a class="header">{{.GetFullName}}</a></label>
+                <input checked id="FULL_REPO_NAME" name="FULL_REPO_NAME" type="checkbox">
+                <label for="FULL_REPO_NAME"><a class="header">FULL_REPO_NAME</a></label>
             </div>
         </div>
     </div>
@@ -69,7 +70,7 @@
     </div>
 
     <div class="actions">
-        <div class="ui approve green button">Add</div>
+        <div id="add-repos-btn" class="ui approve green button">Add</div>
         <div class="ui cancel button">Cancel</div>
     </div>
 </div>

@@ -39,10 +39,12 @@ func LoginToGitea(ctx *context.Context, form GiteaLoginForm) {
 		return
 	}
 	ctx.Session.Set("gitea_user", &context.User{
+		ID:        usr.ID,
 		Username:  usr.UserName,
 		Token:     token,
 		AvatarURL: usr.AvatarURL,
 	})
+	ctx.Session.Set("gitea", form.GiteaURL)
 	ctx.Redirect("/")
 	return
 }

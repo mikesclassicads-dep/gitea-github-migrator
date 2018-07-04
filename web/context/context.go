@@ -1,11 +1,13 @@
 package context
 
 import (
+	bgctx "context"
 	"fmt"
 	"strings"
 
-	bgctx "context"
+	"code.gitea.io/sdk/gitea"
 	"git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator/config"
+	"git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator/migrations"
 	"github.com/go-macaron/session"
 	"github.com/google/go-github/github"
 	"golang.org/x/oauth2"
@@ -18,17 +20,33 @@ type Context struct {
 	Flash   *session.Flash
 	Session session.Store
 
-	Client    *github.Client
-	User      *User //GitHub user
-	GiteaUser *User
-	Link      string // current request URL
+	Client      *github.Client
+	GiteaClient *gitea.Client
+	User        *User //GitHub user
+	GiteaUser   *User
+	Link        string // current request URL
 }
 
 // User is an abstraction of a Gitea or GitHub user, saving the required information
 type User struct {
+	ID        int64
 	Username  string
 	AvatarURL string
 	Token     string
+}
+
+var runningJobs = make(map[string]*migrations.Job)
+
+// GetCurrentJob returns the current job of the user
+// Bug(JonasFranzDEV): prevents saleability (FIXME)
+func (ctx *Context) GetCurrentJob() *migrations.Job {
+	return runningJobs[ctx.Session.ID()]
+}
+
+// SetCurrentJob sets the current job of the user
+// Bug(JonasFranzDEV): prevents saleability (FIXME)
+func (ctx *Context) SetCurrentJob(job *migrations.Job) {
+	runningJobs[ctx.Session.ID()] = job
 }
 
 // Handle displays the corresponding error message
@@ -84,6 +102,9 @@ func Contexter() macaron.Handler {
 			ctx.Client = github.NewClient(tc)
 		} else {
 			ctx.Client = github.NewClient(nil)
+		}
+		if giteaURL, ok := sess.Get("gitea").(string); ok && giteaURL != "" && ctx.GiteaUser != nil && ctx.GiteaUser.Token != "" {
+			ctx.GiteaClient = gitea.NewClient(giteaURL, ctx.GiteaUser.Token)
 		}
 		c.Map(ctx)
 	}

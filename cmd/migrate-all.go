@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"sync"
 
 	"code.gitea.io/sdk/gitea"
 	"git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator/migrations"
@@ -27,19 +26,13 @@ var CmdMigrateAll = cli.Command{
 }
 
 func runMigrateAll(ctx *cli.Context) error {
-	m := &migrations.Migratory{
-		Client:     gitea.NewClient(ctx.String("url"), ctx.String("token")),
-		Private:    ctx.Bool("private"),
-		NewOwnerID: ctx.Int("owner"),
-	}
-	c := context.Background()
-
+	onlyRepos := ctx.Bool("only-repo")
 	var gc *github.Client
 	if ctx.IsSet("gh-token") {
 		ts := oauth2.StaticTokenSource(
 			&oauth2.Token{AccessToken: ctx.String("gh-token")},
 		)
-		tc := oauth2.NewClient(c, ts)
+		tc := oauth2.NewClient(context.Background(), ts)
 		gc = github.NewClient(tc)
 	} else {
 		gc = github.NewClient(nil)
@@ -51,7 +44,7 @@ func runMigrateAll(ctx *cli.Context) error {
 	// get all pages of results
 	var allRepos []*github.Repository
 	for {
-		repos, resp, err := gc.Repositories.List(c, ctx.String("gh-user"), opt)
+		repos, resp, err := gc.Repositories.List(context.Background(), ctx.String("gh-user"), opt)
 		if err != nil {
 			return err
 		}
@@ -61,25 +54,25 @@ func runMigrateAll(ctx *cli.Context) error {
 		}
 		opt.Page = resp.NextPage
 	}
-	errs := make(chan error, 1)
+	job := migrations.NewJob(&migrations.Options{
+		Private:    ctx.Bool("private"),
+		NewOwnerID: ctx.Int("owner"),
 
-	var wg sync.WaitGroup
-	wg.Add(len(allRepos))
+		Comments:     !onlyRepos,
+		Issues:       !onlyRepos,
+		Labels:       !onlyRepos,
+		Milestones:   !onlyRepos,
+		PullRequests: !onlyRepos,
+		Strategy:     migrations.Classic,
+	}, gitea.NewClient(ctx.String("url"), ctx.String("token")), gc)
 	for _, repo := range allRepos {
-		go func(r *github.Repository) {
-			defer wg.Done()
-			errs <- migrate(c, gc, m, r.Owner.GetLogin(), r.GetName(), ctx.Bool("only-repo"))
-		}(repo)
+		job.Repositories = append(job.Repositories, repo.GetFullName())
 	}
-
-	go func() {
-		for i := range errs {
-			if i != nil {
-				fmt.Printf("error: %v", i)
-			}
+	errs := job.StartMigration()
+	for i := range errs {
+		if i != nil {
+			fmt.Printf("error: %v\n", i)
 		}
-	}()
-
-	wg.Wait()
+	}
 	return nil
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/urfave/cli"
 )
 
+// CmdWeb stars the web interface
 var CmdWeb = cli.Command{
 	Name:   "web",
 	Usage:  "Starts the web interface",
@@ -23,5 +24,6 @@ func runWeb(_ *cli.Context) error {
 	r := web.InitRoutes()
 
 	fmt.Println("Server is running...")
+	// TODO add port / host to config
 	return http.ListenAndServe("0.0.0.0:4000", r)
 }

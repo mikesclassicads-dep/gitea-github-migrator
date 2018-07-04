@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"code.gitea.io/sdk/gitea"
 	"git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator/migrations"
@@ -28,29 +27,39 @@ var CmdMigrate = cli.Command{
 }
 
 func runMigrate(ctx *cli.Context) error {
-	m := &migrations.Migratory{
-		Client:     gitea.NewClient(ctx.String("url"), ctx.String("token")),
-		Private:    ctx.Bool("private"),
-		NewOwnerID: ctx.Int("owner"),
-	}
-	c := context.Background()
+	onlyRepos := ctx.Bool("only-repo")
 	var gc *github.Client
 	if ctx.IsSet("gh-token") {
 		ts := oauth2.StaticTokenSource(
 			&oauth2.Token{AccessToken: ctx.String("gh-token")},
 		)
-		tc := oauth2.NewClient(c, ts)
+		tc := oauth2.NewClient(context.Background(), ts)
 		gc = github.NewClient(tc)
 	} else {
 		gc = github.NewClient(nil)
 	}
 
-	username := strings.Split(ctx.String("gh-repo"), "/")[0]
-	repo := strings.Split(ctx.String("gh-repo"), "/")[1]
+	job := migrations.NewJob(&migrations.Options{
+		Private:    ctx.Bool("private"),
+		NewOwnerID: ctx.Int("owner"),
 
-	return migrate(c, gc, m, username, repo, ctx.Bool("only-repo"))
+		Comments:     !onlyRepos,
+		Issues:       !onlyRepos,
+		Labels:       !onlyRepos,
+		Milestones:   !onlyRepos,
+		PullRequests: !onlyRepos,
+		Strategy:     migrations.Classic,
+	}, gitea.NewClient(ctx.String("url"), ctx.String("token")), gc, ctx.String("gh-repo"))
+	errs := job.StartMigration()
+	for err := range errs {
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
+// Deprecated: Please use Job or FetchMigratory instead
 func migrate(c context.Context, gc *github.Client, m *migrations.Migratory, username, repo string, onlyRepo bool) error {
 	fmt.Printf("Fetching repository %s/%s...\n", username, repo)
 	gr, _, err := gc.Repositories.Get(c, username, repo)

@@ -59,6 +59,7 @@ func CallbackFromGitHub(ctx *webcontext.Context, session session.Store) {
 		return
 	}
 	session.Set("user", &webcontext.User{
+		ID:        user.GetID(),
 		AvatarURL: *user.AvatarURL,
 		Username:  user.GetLogin(),
 		Token:     token.AccessToken,

@@ -18,7 +18,7 @@ func (m *Migratory) Issue(gi *github.Issue) (*gitea.Issue, error) {
 
 	// Migrate milestone if it is not already migrated
 	milestone := int64(0)
-	if gi.Milestone != nil {
+	if gi.Milestone != nil && m.Options.Milestones {
 		// Lookup if milestone is already migrated
 		if migratedMilestone, ok := m.migratedMilestones[*gi.Milestone.ID]; ok {
 			milestone = migratedMilestone
@@ -28,10 +28,14 @@ func (m *Migratory) Issue(gi *github.Issue) (*gitea.Issue, error) {
 			milestone = ms.ID
 		}
 	}
-	// Migrate labels
-	labels, err := m.labels(gi.Labels)
-	if err != nil {
-		return nil, err
+	var labels = make([]int64, 0)
+	var err error
+	if m.Options.Labels {
+		// Migrate labels
+		labels, err = m.labels(gi.Labels)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return m.Client.CreateIssue(m.repository.Owner.UserName, m.repository.Name,

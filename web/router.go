@@ -56,7 +56,8 @@ func InitRoutes() *macaron.Macaron {
 	m.Group("/gitea", func() {
 		m.Post("/", binding.BindIgnErr(auth.GiteaLoginForm{}), auth.LoginToGitea)
 	})
-	m.Get("/repos", reqSignIn, migration.ListRepos)
+	m.Combo("/repos", reqSignIn).Get(migration.ListRepos).Post(migration.ListReposPost)
+	m.Get("/status", reqSignIn, migration.StatusReport)
 	return m
 }
 
