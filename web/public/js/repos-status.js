@@ -1,8 +1,12 @@
+var done = false;
+
 function update() {
     $.getJSON("/status", function(data) {
         handleData(data);
     }).always(function() {
-        window.setTimeout(update, 1000);
+        if(!done){
+            window.setTimeout(update, 1000);
+        }
     });
 }
 $(function() {
@@ -19,6 +23,7 @@ $(function() {
 function handleData(data) {
     if(Object.keys(data.finished).length + Object.keys(data.failed).length === $(".repo-progress").progress('get total')) {
         $(".repo-progress").progress('complete');
+        done = true;
     } else {
         $(".repo-progress").progress('set progress', Object.keys(data.finished).length + Object.keys(data.failed).length);
     }
@@ -38,13 +43,27 @@ function handleData(data) {
     });
     forEach(data.running, function (repo, report) {
         var content = handleNonPending(repo, report);
-        content.find(".comment-progress").progress('set progress', report.migrated_comments + report.failed_commments);
+        if (content.find(".comment-progress").progress('get total') !== report.total_comments) {
+            content.find(".comment-progress").progress('set total', report.total_comments)
+        }
+        if (content.find(".issue-progress").progress('get total') !== report.total_issues) {
+            content.find(".issue-progress").progress('set total', report.total_issues)
+        }
+        content.find(".comment-progress").progress('set progress', report.migrated_comments + report.failed_comments);
         content.find(".issue-progress").progress('set progress', report.migrated_issues + report.failed_issues);
     });
     forEach(data.finished, function (repo, report) {
         var content = handleNonPending(repo, report);
-        content.find(".comment-progress").progress('complete');
+        if (content.find(".comment-progress").progress('get total') !== report.total_comments) {
+            content.find(".comment-progress").progress('set total', report.total_comments)
+        }
+        if (content.find(".issue-progress").progress('get total') !== report.total_issues) {
+            content.find(".issue-progress").progress('set total', report.total_issues)
+        }
+        content.find(".comment-progress").progress('set progress', report.migrated_comments + report.failed_comments);
+        content.find(".issue-progress").progress('set progress', report.migrated_issues + report.failed_issues);
         content.find(".issue-progress").progress('complete');
+        content.find(".comment-progress").progress('complete');
     });
 }
 function forEach(object, callback) {
@@ -72,7 +91,7 @@ function handleNonPending(repo, report) {
                 active  : 'Migrated {value} of {total} comments',
                 success : '{total} comments migrated!'
             },
-            total: report.total_comments,
+            total: report.total_comments+1,
             value: report.migrated_comments + report.failed_comments,
         });
         content.addClass("non-pending");

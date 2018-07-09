@@ -23,7 +23,7 @@ function parseReposInTextArea() {
 }
 
 function addRepoToList(repo) {
-    var item = $("#repo-item").children('.item');
+    var item = $("#repo-item").children('.item').clone();
     item.html(item.html().replace(/FULL_REPO_NAME/g, repo));
     console.log(repo, item.html());
     $("#repo-list").append(item);

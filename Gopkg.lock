@@ -2,11 +2,10 @@
 
 
 [[projects]]
-  branch = "myuserinfo"
+  branch = "master"
   name = "code.gitea.io/sdk"
   packages = ["gitea"]
-  revision = "6c33946d3f5b59646286ec6d6f02e88de690a1b3"
-  source = "github.com/JonasFranzDEV/go-sdk"
+  revision = "79a281c4e34ae44cf96a23f0283729a074a6c2a0"
 
 [[projects]]
   name = "github.com/BurntSushi/toml"
@@ -25,6 +24,12 @@
   name = "github.com/adam-hanna/randomstrings"
   packages = ["."]
   revision = "88fd7c52a2c704c5d530718c1be454292a806e2b"
+
+[[projects]]
+  name = "github.com/davecgh/go-spew"
+  packages = ["spew"]
+  revision = "346938d642f2ec3594ed81d874461961cd0faa76"
+  version = "v1.1.0"
 
 [[projects]]
   branch = "master"
@@ -51,12 +56,6 @@
   version = "v1.11.1"
 
 [[projects]]
-  name = "github.com/davecgh/go-spew"
-  packages = ["spew"]
-  revision = "346938d642f2ec3594ed81d874461961cd0faa76"
-  version = "v1.1.0"
-
-[[projects]]
   name = "github.com/golang/protobuf"
   packages = ["proto"]
   revision = "b4deda0973fb4c70b50d226b1af49f3da59f5265"
@@ -75,29 +74,6 @@
   revision = "53e6ce116135b80d037921a7fdd5138cf32d7a8a"
 
 [[projects]]
-  name = "github.com/pmezard/go-difflib"
-  packages = ["difflib"]
-  revision = "792786c7400a136282c1664665ae0a8db921c6c2"
-  version = "v1.0.0"
-
-[[projects]]
-  name = "github.com/stretchr/objx"
-  packages = ["."]
-  revision = "477a77ecc69700c7cdeb1fa9e129548e1c1c393c"
-  version = "v0.1.1"
-
-[[projects]]
-  name = "github.com/stretchr/testify"
-  packages = [
-    ".",
-    "assert",
-    "http",
-    "mock"
-  ]
-  revision = "f35b8ab0b5a2cef36673838d662e249dd9c94686"
-  version = "v1.2.2"
-
-[[projects]]
   branch = "master"
   name = "github.com/jinzhu/configor"
   packages = ["."]
@@ -108,6 +84,18 @@
   packages = ["."]
   revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
   version = "v0.8.0"
+
+[[projects]]
+  name = "github.com/pmezard/go-difflib"
+  packages = ["difflib"]
+  revision = "792786c7400a136282c1664665ae0a8db921c6c2"
+  version = "v1.0.0"
+
+[[projects]]
+  name = "github.com/stretchr/testify"
+  packages = ["assert"]
+  revision = "f35b8ab0b5a2cef36673838d662e249dd9c94686"
+  version = "v1.2.2"
 
 [[projects]]
   name = "github.com/urfave/cli"
@@ -175,6 +163,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "884bf618611f0aaad19defa64a14fa70fd2b522afe8cf99dedbfada2a9d8b88d"
+  inputs-digest = "d73409e3342f71d7a737dd452af78159ec22f8ae128c1b009d7189b3e87f27fb"
   solver-name = "gps-cdcl"
   solver-version = 1

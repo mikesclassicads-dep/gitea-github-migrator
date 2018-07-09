@@ -3,6 +3,9 @@ package migrations
 import (
 	"context"
 	"fmt"
+	"regexp"
+	"strconv"
+	"strings"
 	"sync"
 
 	"code.gitea.io/sdk/gitea"
@@ -38,8 +41,11 @@ func (fm *FetchMigratory) MigrateFromGitHub() error {
 		fm.Status.FatalError = err
 		return fmt.Errorf("Repository migration: %v", err)
 	}
-	var wg sync.WaitGroup
 	if fm.Options.Issues || fm.Options.PullRequests {
+		var commentsChan chan *[]*github.IssueComment
+		if fm.Options.Comments {
+			commentsChan = fm.fetchCommentsAsync()
+		}
 		issues, err := fm.FetchIssues()
 		if err != nil {
 			fm.Status.Stage = Failed
@@ -47,26 +53,71 @@ func (fm *FetchMigratory) MigrateFromGitHub() error {
 			return err
 		}
 		fm.Status.Stage = Migrating
+		fm.Status.Issues = int64(len(issues))
+		migratedIssues := make(map[int]*gitea.Issue)
 		for _, issue := range issues {
 			if (!issue.IsPullRequest() || fm.Options.PullRequests) &&
 				(issue.IsPullRequest() || fm.Options.Issues) {
-				fm.Status.Issues++
-				giteaIssue, err := fm.Issue(issue)
+				migratedIssues[issue.GetNumber()], err = fm.Issue(issue)
 				if err != nil {
 					fm.Status.IssuesError++
 					// TODO log errors
 					continue
 				}
-				wg.Add(1)
-				go func() {
-					fm.FetchAndMigrateComments(issue, giteaIssue)
-					wg.Done()
-				}()
 				fm.Status.IssuesMigrated++
+			} else {
+				fm.Status.Issues--
 			}
 		}
+		if fm.Options.Comments {
+			var comments []*github.IssueComment
+			if cmts := <-commentsChan; cmts == nil {
+				fm.Status.Stage = Failed
+				return err
+			} else {
+				comments = *cmts
+			}
+
+			if err != nil {
+				fm.Status.Stage = Failed
+				fm.Status.FatalError = err
+				return err
+			}
+			fm.Status.Comments = int64(len(comments))
+			commentsByIssue := make(map[*gitea.Issue][]*github.IssueComment, len(migratedIssues))
+			for _, comment := range comments {
+				issueIndex, err := getIssueIndexFromHTMLURL(comment.GetHTMLURL())
+				if err != nil {
+					fm.Status.CommentsError++
+					continue
+				}
+				if issue, ok := migratedIssues[issueIndex]; ok && issue != nil {
+					if list, ok := commentsByIssue[issue]; !ok && list != nil {
+						commentsByIssue[issue] = []*github.IssueComment{comment}
+					} else {
+						commentsByIssue[issue] = append(list, comment)
+					}
+				} else {
+					fm.Status.CommentsError++
+					continue
+				}
+			}
+			wg := sync.WaitGroup{}
+			for issue, comms := range commentsByIssue {
+				wg.Add(1)
+				go func(i *gitea.Issue, cs []*github.IssueComment) {
+					for _, comm := range cs {
+						if _, err := fm.IssueComment(i, comm); err != nil {
+							fm.Status.CommentsError++
+							continue
+						}
+						fm.Status.CommentsMigrated++
+					}
+				}(issue, comms)
+			}
+			wg.Wait()
+		}
 	}
-	wg.Wait()
 	if fm.Status.FatalError != nil {
 		fm.Status.Stage = Failed
 		return nil
@@ -75,22 +126,30 @@ func (fm *FetchMigratory) MigrateFromGitHub() error {
 	return nil
 }
 
-// FetchAndMigrateComments loads all comments from GitHub and migrates them to Gitea
-func (fm *FetchMigratory) FetchAndMigrateComments(issue *github.Issue, giteaIssue *gitea.Issue) {
-	comments, _, err := fm.GHClient.Issues.ListComments(fm.ctx(), fm.RepoOwner, fm.RepoName, issue.GetNumber(), nil)
-	if err != nil {
-		// TODO log errors
-		return
+var issueIndexRegex = regexp.MustCompile(`/(issues|pull)/([0-9]+)#`)
+
+func getIssueIndexFromHTMLURL(htmlURL string) (int, error) {
+	// Alt is 4 times faster but more error prune
+	if res, err := getIssueIndexFromHTMLURLAlt(htmlURL); err == nil {
+		return res, nil
 	}
-	fm.Status.Comments += int64(len(comments))
-	for _, gc := range comments {
-		if _, err := fm.IssueComment(giteaIssue, gc); err != nil {
-			fm.Status.CommentsError++
-			// TODO log errors
-			return
-		}
-		fm.Status.CommentsMigrated++
+	matches := issueIndexRegex.FindStringSubmatch(htmlURL)
+	if len(matches) < 3 {
+		return 0, fmt.Errorf("cannot parse issue id from HTML URL: %s", htmlURL)
 	}
+	return strconv.Atoi(matches[2])
+}
+func getIssueIndexFromHTMLURLAlt(htmlURL string) (int, error) {
+	res := strings.Split(htmlURL, "/issues/")
+	if len(res) != 2 {
+		res = strings.Split(htmlURL, "/pull/")
+	}
+	if len(res) != 2 {
+		return 0, fmt.Errorf("invalid HTMLURL: %s", htmlURL)
+	}
+	number := res[1]
+	number = strings.Split(number, "#")[0]
+	return strconv.Atoi(number)
 }
 
 // FetchIssues fetches all issues from GitHub
@@ -116,4 +175,43 @@ func (fm *FetchMigratory) FetchIssues() ([]*github.Issue, error) {
 		opt.Page = resp.NextPage
 	}
 	return allIssues, nil
+}
+
+// FetchComments fetches all comments from GitHub
+func (fm *FetchMigratory) FetchComments() ([]*github.IssueComment, error) {
+	var allComments = make([]*github.IssueComment, 0)
+	opt := &github.IssueListCommentsOptions{
+		Sort:      "created",
+		Direction: "asc",
+		ListOptions: github.ListOptions{
+			PerPage: 100,
+		},
+	}
+	for {
+		comments, resp, err := fm.GHClient.Issues.ListComments(fm.ctx(), fm.RepoOwner, fm.RepoName, 0, opt)
+		if err != nil {
+			return nil, fmt.Errorf("error while listing repos: %v", err)
+		}
+		allComments = append(allComments, comments...)
+		if resp.NextPage == 0 {
+			break
+		}
+		opt.Page = resp.NextPage
+	}
+	return allComments, nil
+}
+
+func (fm *FetchMigratory) fetchCommentsAsync() chan *[]*github.IssueComment {
+	ret := make(chan *[]*github.IssueComment, 1)
+	go func(f *FetchMigratory) {
+		comments, err := f.FetchComments()
+		if err != nil {
+			f.Status.FatalError = err
+			ret <- nil
+			return
+		}
+		f.Status.Comments = int64(len(comments))
+		ret <- &comments
+	}(fm)
+	return ret
 }
