@@ -1,21 +1,25 @@
 package migration
 
 import (
+	bgctx "context"
 	"regexp"
 	"strings"
 
 	"git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator/migrations"
 	"git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator/web/context"
 	"github.com/google/go-github/github"
-
-	bgctx "context"
 )
 
 const repoRegex = "^[A-Za-z0-9-.]+/[A-Za-z0-9-.]+$"
 
 // ListRepos shows all available repos of the signed in user
 func ListRepos(ctx *context.Context) {
-	repos, _, err := ctx.Client.Repositories.List(bgctx.Background(), ctx.User.Username, &github.RepositoryListOptions{})
+	repos, _, err := ctx.Client.Repositories.List(bgctx.Background(), ctx.User.Username, &github.RepositoryListOptions{
+		ListOptions: github.ListOptions{
+			PerPage: 100,
+		},
+	})
+
 	if err != nil {
 		ctx.Handle(500, "list repositories", err)
 		return

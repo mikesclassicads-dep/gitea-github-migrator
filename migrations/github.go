@@ -10,6 +10,7 @@ import (
 
 	"code.gitea.io/sdk/gitea"
 	"github.com/google/go-github/github"
+	"github.com/sirupsen/logrus"
 )
 
 // FetchMigratory adds GitHub fetching functions to migratory
@@ -29,6 +30,9 @@ func (fm *FetchMigratory) MigrateFromGitHub() error {
 	fm.Status = &MigratoryStatus{
 		Stage: Importing,
 	}
+	logrus.WithFields(logrus.Fields{
+		"repo": fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
+	}).Info("migrating git repository")
 	ghRepo, _, err := fm.GHClient.Repositories.Get(fm.ctx(), fm.RepoOwner, fm.RepoName)
 	if err != nil {
 		fm.Status.Stage = Failed
@@ -41,6 +45,9 @@ func (fm *FetchMigratory) MigrateFromGitHub() error {
 		fm.Status.FatalError = err
 		return fmt.Errorf("Repository migration: %v", err)
 	}
+	logrus.WithFields(logrus.Fields{
+		"repo": fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
+	}).Info("git repository migrated")
 	if fm.Options.Issues || fm.Options.PullRequests {
 		var commentsChan chan *[]*github.IssueComment
 		if fm.Options.Comments {
@@ -50,6 +57,9 @@ func (fm *FetchMigratory) MigrateFromGitHub() error {
 		if err != nil {
 			fm.Status.Stage = Failed
 			fm.Status.FatalError = err
+			logrus.WithFields(logrus.Fields{
+				"repo": fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
+			}).Fatalf("migration failed: %v", fm.Status.FatalError)
 			return err
 		}
 		fm.Status.Stage = Migrating
@@ -61,10 +71,17 @@ func (fm *FetchMigratory) MigrateFromGitHub() error {
 				migratedIssues[issue.GetNumber()], err = fm.Issue(issue)
 				if err != nil {
 					fm.Status.IssuesError++
-					// TODO log errors
+					logrus.WithFields(logrus.Fields{
+						"repo":  fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
+						"issue": issue.GetNumber(),
+					}).Warnf("error while migrating: %v", err)
 					continue
 				}
 				fm.Status.IssuesMigrated++
+				logrus.WithFields(logrus.Fields{
+					"repo":  fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
+					"issue": issue.GetNumber(),
+				}).Info("issue migrated")
 			} else {
 				fm.Status.Issues--
 			}
@@ -73,6 +90,10 @@ func (fm *FetchMigratory) MigrateFromGitHub() error {
 			var comments []*github.IssueComment
 			if cmts := <-commentsChan; cmts == nil {
 				fm.Status.Stage = Failed
+				err := fmt.Errorf("error while fetching issue comments")
+				logrus.WithFields(logrus.Fields{
+					"repo": fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
+				}).Fatalf("migration failed: %v", fm.Status.FatalError)
 				return err
 			} else {
 				comments = *cmts
@@ -81,6 +102,9 @@ func (fm *FetchMigratory) MigrateFromGitHub() error {
 			if err != nil {
 				fm.Status.Stage = Failed
 				fm.Status.FatalError = err
+				logrus.WithFields(logrus.Fields{
+					"repo": fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
+				}).Fatalf("migration failed: %v", fm.Status.FatalError)
 				return err
 			}
 			fm.Status.Comments = int64(len(comments))
@@ -89,6 +113,11 @@ func (fm *FetchMigratory) MigrateFromGitHub() error {
 				issueIndex, err := getIssueIndexFromHTMLURL(comment.GetHTMLURL())
 				if err != nil {
 					fm.Status.CommentsError++
+					logrus.WithFields(logrus.Fields{
+						"repo":    fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
+						"issue":   issueIndex,
+						"comment": comment.GetID(),
+					}).Warnf("error while migrating comment: %v", err)
 					continue
 				}
 				if issue, ok := migratedIssues[issueIndex]; ok && issue != nil {
@@ -109,10 +138,19 @@ func (fm *FetchMigratory) MigrateFromGitHub() error {
 					for _, comm := range cs {
 						if _, err := fm.IssueComment(i, comm); err != nil {
 							fm.Status.CommentsError++
+							logrus.WithFields(logrus.Fields{
+								"repo":    fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
+								"comment": comm.GetID(),
+							}).Warnf("error while migrating comment: %v", err)
 							continue
 						}
 						fm.Status.CommentsMigrated++
+						logrus.WithFields(logrus.Fields{
+							"repo":    fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
+							"comment": comm.GetID(),
+						}).Info("comment migrated")
 					}
+					wg.Done()
 				}(issue, comms)
 			}
 			wg.Wait()
@@ -120,9 +158,15 @@ func (fm *FetchMigratory) MigrateFromGitHub() error {
 	}
 	if fm.Status.FatalError != nil {
 		fm.Status.Stage = Failed
+		logrus.WithFields(logrus.Fields{
+			"repo": fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
+		}).Fatalf("migration failed: %v", fm.Status.FatalError)
 		return nil
 	}
 	fm.Status.Stage = Finished
+	logrus.WithFields(logrus.Fields{
+		"repo": fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
+	}).Info("migration successful")
 	return nil
 }
 
@@ -208,6 +252,9 @@ func (fm *FetchMigratory) fetchCommentsAsync() chan *[]*github.IssueComment {
 		if err != nil {
 			f.Status.FatalError = err
 			ret <- nil
+			logrus.WithFields(logrus.Fields{
+				"repo": fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
+			}).Fatalf("fetching comments failed: %v", fm.Status.FatalError)
 			return
 		}
 		f.Status.Comments = int64(len(comments))

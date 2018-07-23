@@ -1,3 +1,5 @@
+// +build web
+
 package cmd
 
 import (
@@ -7,6 +9,7 @@ import (
 	"git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator/config"
 	"git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator/web"
 	"github.com/jinzhu/configor"
+	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
 
@@ -23,7 +26,15 @@ func runWeb(_ *cli.Context) error {
 	}
 	r := web.InitRoutes()
 
-	fmt.Println("Server is running...")
-	// TODO add port / host to config
-	return http.ListenAndServe("0.0.0.0:4000", r)
+	hostname := config.Config.Web.Host
+	if len(hostname) == 0 {
+		hostname = "0.0.0.0"
+	}
+	port := config.Config.Web.Port
+	if port == 0 {
+		port = 4000
+	}
+	logrus.Infof("Server is running at http://%s:%d", hostname, port)
+	logrus.SetLevel(logrus.PanicLevel)
+	return http.ListenAndServe(fmt.Sprintf("%s:%d", hostname, port), r)
 }

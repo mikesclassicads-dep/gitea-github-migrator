@@ -6,5 +6,9 @@ var Config = struct {
 		ClientID     string `required:"true" yaml:"client_id"`
 		ClientSecret string `required:"true" yaml:"client_secret"`
 	}
+	Web struct {
+		Host string `yaml:"host"`
+		Port int    `yaml:"port"`
+	}
 	Secret string `required:"true"`
 }{}

@@ -38,13 +38,13 @@ type User struct {
 var runningJobs = make(map[string]*migrations.Job)
 
 // GetCurrentJob returns the current job of the user
-// Bug(JonasFranzDEV): prevents saleability (FIXME)
+// Bug(JonasFranzDEV): prevents scalability (FIXME)
 func (ctx *Context) GetCurrentJob() *migrations.Job {
 	return runningJobs[ctx.Session.ID()]
 }
 
 // SetCurrentJob sets the current job of the user
-// Bug(JonasFranzDEV): prevents saleability (FIXME)
+// Bug(JonasFranzDEV): prevents scalability (FIXME)
 func (ctx *Context) SetCurrentJob(job *migrations.Job) {
 	runningJobs[ctx.Session.ID()] = job
 }

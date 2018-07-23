@@ -7,6 +7,7 @@ import (
 	"code.gitea.io/sdk/gitea"
 	"git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator/migrations"
 	"github.com/google/go-github/github"
+	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 	"golang.org/x/oauth2"
 )
@@ -26,6 +27,7 @@ var CmdMigrateAll = cli.Command{
 }
 
 func runMigrateAll(ctx *cli.Context) error {
+	logrus.SetLevel(logrus.InfoLevel)
 	onlyRepos := ctx.Bool("only-repo")
 	var gc *github.Client
 	if ctx.IsSet("gh-token") {

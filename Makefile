@@ -21,6 +21,9 @@ all:
 docker-binary:
 	go build -ldflags "$(LDFLAGS)" -o gitea-github-migrator
 
+.PHONY: docker-binary-web
+	go build -ldflags "$(LDFLAGS)" -tags web -o gitea-github-migrator
+
 .PHONY: generate-release-file
 generate-release-file:
 	echo $(VERSION) > .version
@@ -30,7 +33,7 @@ release:
 	@hash gox > /dev/null 2>&1; if [ $$? -ne 0 ]; then \
 		$(GO) get -u github.com/mitchellh/gox; \
 	fi
-	gox -ldflags "$(LDFLAGS)" -output "releases/gitea-github-migrator_{{.OS}}_{{.Arch}}"
+	gox -ldflags "$(LDFLAGS)" -tags web -output "releases/gitea-github-migrator_{{.OS}}_{{.Arch}}"
 
 .PHONY: lint
 lint:
@@ -45,5 +48,5 @@ vet:
 
 .PHONY: test
 test: lint vet
-	go test -cover ./...
+	go test -tags web -cover ./...
 	

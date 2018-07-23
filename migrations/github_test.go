@@ -2,6 +2,9 @@ package migrations
 
 import (
 	"testing"
+
+	"github.com/google/go-github/github"
+	"github.com/stretchr/testify/assert"
 )
 
 func BenchmarkGetIssueIndexFromHTMLURLAlt(b *testing.B) {
@@ -14,4 +17,23 @@ func BenchmarkGetIssueIndexFromHTMLURL(b *testing.B) {
 	for i := 0; i <= b.N; i++ {
 		getIssueIndexFromHTMLURL("https://github.com/octocat/Hello-World/issues/1347#issuecomment-1")
 	}
+}
+
+var testFMig = &FetchMigratory{
+	Migratory: *DemoMigratory,
+	GHClient:  github.NewClient(nil),
+	RepoOwner: "JonasFranzDEV",
+	RepoName:  "test",
+}
+
+func TestFetchMigratory_FetchIssues(t *testing.T) {
+	issues, err := testFMig.FetchIssues()
+	assert.NoError(t, err)
+	assert.True(t, len(issues) > 0, "at least one issue found")
+}
+
+func TestFetchMigratory_FetchComments(t *testing.T) {
+	comments, err := testFMig.FetchIssues()
+	assert.NoError(t, err)
+	assert.True(t, len(comments) > 0, "at least one comment found")
 }
