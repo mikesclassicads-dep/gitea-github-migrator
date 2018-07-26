@@ -30,7 +30,7 @@ var DemoMigratory = &Migratory{
 var demoTime = time.Date(2018, 01, 01, 01, 01, 01, 01, time.UTC)
 
 func assertNoError(t *testing.T, err error) {
-	if strings.Contains(err.Error(), "lookup gitea") {
+	if err != nil && strings.Contains(err.Error(), "lookup gitea") {
 		t.Skip("gitea instance is not running")
 	} else {
 		assert.NoError(t, err)
