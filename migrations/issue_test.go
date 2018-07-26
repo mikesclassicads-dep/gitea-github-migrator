@@ -28,7 +28,7 @@ func TestMigratory_Label(t *testing.T) {
 		Name:  github.String("testlabel"),
 		Color: github.String("123456"),
 	})
-	assert.NoError(t, err)
+	assertNoError(t, err)
 	assert.Equal(t, "123456", res.Color)
 	assert.Equal(t, "testlabel", res.Name)
 }
@@ -41,7 +41,7 @@ func TestMigratory_Milestone(t *testing.T) {
 		Title:       github.String("TEST"),
 		DueOn:       &demoTime,
 	})
-	assert.NoError(t, err)
+	assertNoError(t, err)
 	assert.Equal(t, "TEST", res.Title)
 	assert.Equal(t, "test milestone", res.Description)
 	assert.Equal(t, demoTime.Unix(), res.Deadline.Unix())

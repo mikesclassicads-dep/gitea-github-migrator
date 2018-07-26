@@ -1,9 +1,12 @@
 package migrations
 
 import (
+	"strings"
+	"testing"
 	"time"
 
 	"code.gitea.io/sdk/gitea"
+	"github.com/stretchr/testify/assert"
 )
 
 // DemoMigratory is been used for testing
@@ -25,3 +28,11 @@ var DemoMigratory = &Migratory{
 }
 
 var demoTime = time.Date(2018, 01, 01, 01, 01, 01, 01, time.UTC)
+
+func assertNoError(t *testing.T, err error) {
+	if strings.Contains(err.Error(), "lookup gitea") {
+		t.Skip("gitea instance is not running")
+	} else {
+		assert.NoError(t, err)
+	}
+}
