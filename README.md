@@ -55,7 +55,7 @@ docker run ggmigrator/cli:latest
 
 For release builds:
 ```docker
-docker run ggmigrator/cli:0.0.9
+docker run ggmigrator/cli:0.0.10
 ```
 
 
