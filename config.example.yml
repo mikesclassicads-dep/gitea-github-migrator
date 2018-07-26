@@ -1,0 +1,8 @@
+# GitHub contains the OAuth2 application data obtainable from GitHub
+GitHub:
+  client_id: GITHUB_OAUTH_CLIENT_ID
+  client_secret: GITHUB_OAUTH_SECRET
+# Web contains the configuration for the integrated web server
+Web:
+  port: 4000
+  host: 0.0.0.0

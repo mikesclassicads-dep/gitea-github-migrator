@@ -8,16 +8,58 @@
   revision = "79a281c4e34ae44cf96a23f0283729a074a6c2a0"
 
 [[projects]]
+  name = "github.com/BurntSushi/toml"
+  packages = ["."]
+  revision = "b26d9c308763d68093482582cea63d69be07a0f0"
+  version = "v0.3.0"
+
+[[projects]]
+  name = "github.com/Unknwon/com"
+  packages = ["."]
+  revision = "7677a1d7c1137cd3dd5ba7a076d0c898a1ef4520"
+  version = "master"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/adam-hanna/randomstrings"
+  packages = ["."]
+  revision = "88fd7c52a2c704c5d530718c1be454292a806e2b"
+
+[[projects]]
   name = "github.com/davecgh/go-spew"
   packages = ["spew"]
   revision = "346938d642f2ec3594ed81d874461961cd0faa76"
   version = "v1.1.0"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/go-macaron/binding"
+  packages = ["."]
+  revision = "ac54ee249c27dca7e76fad851a4a04b73bd1b183"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/go-macaron/inject"
+  packages = ["."]
+  revision = "d8a0b8677191f4380287cfebd08e462217bac7ad"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/go-macaron/session"
+  packages = ["."]
+  revision = "b8e286a0dba8f4999042d6b258daf51b31d08938"
+
+[[projects]]
+  name = "github.com/gobuffalo/packr"
+  packages = ["."]
+  revision = "bd47f2894846e32edcf9aa37290fef76c327883f"
+  version = "v1.11.1"
+
+[[projects]]
   name = "github.com/golang/protobuf"
   packages = ["proto"]
-  revision = "925541529c1fa6821df4e44ce2723319eb2be768"
-  version = "v1.0.0"
+  revision = "b4deda0973fb4c70b50d226b1af49f3da59f5265"
+  version = "v1.1.0"
 
 [[projects]]
   name = "github.com/google/go-github"
@@ -32,10 +74,28 @@
   revision = "53e6ce116135b80d037921a7fdd5138cf32d7a8a"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/jinzhu/configor"
+  packages = ["."]
+  revision = "4edaf76fe18865e36de734d887f4c01bd05707af"
+
+[[projects]]
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
+  version = "v0.8.0"
+
+[[projects]]
   name = "github.com/pmezard/go-difflib"
   packages = ["difflib"]
   revision = "792786c7400a136282c1664665ae0a8db921c6c2"
   version = "v1.0.0"
+
+[[projects]]
+  name = "github.com/sirupsen/logrus"
+  packages = ["."]
+  revision = "3e01752db0189b9157070a0e1668a620f9a85da2"
+  version = "v1.0.6"
 
 [[projects]]
   name = "github.com/stretchr/testify"
@@ -51,21 +111,40 @@
 
 [[projects]]
   branch = "master"
+  name = "golang.org/x/crypto"
+  packages = [
+    "pbkdf2",
+    "ssh/terminal"
+  ]
+  revision = "a8fb68e7206f8c78be19b432c58eb52a6aa34462"
+
+[[projects]]
+  branch = "master"
   name = "golang.org/x/net"
   packages = [
     "context",
     "context/ctxhttp"
   ]
-  revision = "24dd3780ca4f75fed9f321890729414a4b5d3f13"
+  revision = "db08ff08e8622530d9ed3a0e8ac279f6d4c02196"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/oauth2"
   packages = [
     ".",
+    "github",
     "internal"
   ]
-  revision = "fdc9e635145ae97e6c2cb777c48305600cf515cb"
+  revision = "1e0a3fa8ba9a5c9eb35c271780101fdaf1b205d7"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/sys"
+  packages = [
+    "unix",
+    "windows"
+  ]
+  revision = "ac767d655b305d4e9612f5f6e33120b9176c4ad4"
 
 [[projects]]
   name = "google.golang.org/appengine"
@@ -78,12 +157,30 @@
     "internal/urlfetch",
     "urlfetch"
   ]
-  revision = "150dc57a1b433e64154302bdc40b6bb8aefa313a"
-  version = "v1.0.0"
+  revision = "b1f26356af11148e710935ed1ac8a7f5702c7612"
+  version = "v1.1.0"
+
+[[projects]]
+  name = "gopkg.in/ini.v1"
+  packages = ["."]
+  revision = "06f5f3d67269ccec1fe5fe4134ba6e982984f7f5"
+  version = "v1.37.0"
+
+[[projects]]
+  name = "gopkg.in/macaron.v1"
+  packages = ["."]
+  revision = "c1be95e6d21e769e44e1ec33cec9da5837861c10"
+  version = "v1.3.1"
+
+[[projects]]
+  name = "gopkg.in/yaml.v2"
+  packages = ["."]
+  revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
+  version = "v2.2.1"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a63a8945bd36ecc14dfbb7f9894543855f9e9e2e493dfdb77c06b4a12aada8a4"
+  inputs-digest = "0c4f08e8c96a1b866394a858e61289c637d938c3476b14446e483acd212ba06f"
   solver-name = "gps-cdcl"
   solver-version = 1

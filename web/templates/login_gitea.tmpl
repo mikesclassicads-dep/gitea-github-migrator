@@ -1,0 +1,67 @@
+{{template "base/head" .}}
+<div class="ui middle aligned center aligned grid">
+    <div class="column">
+        <h1 class="ui image header">
+            <div class="content">
+                Gitea Migrator
+            </div>
+        </h1>
+        <div class="ui message">
+            You've connected you GitHub account. The next step is to connect to your Gitea instance.
+        </div>
+        <div class="ui icon message">
+            <i class="icon github"></i>
+            <div class="content">
+                <h3 class="header">GitHub connected</h3>
+                You're logged in as {{template "modules/username" .User}}. <a href="/logout">Not you?</a>
+            </div>
+        </div>
+        <div class="ui icon attached message">
+            <i class="icon lock"></i>
+            <div class="content">
+                <h3 class="header">Login to Gitea</h3>
+                You can use your user credentials or an access token to log in to your Gitea instance. If you use your credentials
+                an access token will be created for you.
+            </div>
+        </div>
+        <form action="/gitea" method="POST" class="ui large form">
+            <div class="ui attached fluid segment">
+                <div class="field">
+                    <label>Gitea URL</label>
+                    <input name="gitea-url" type="url">
+                </div>
+                <h3>Credentials</h3>
+                <div class="ui top attached tabular menu">
+                    <a class="active item" data-tab="password">Username + Password</a>
+                    <a class="item" data-tab="access-token">Access Token</a>
+                </div>
+                <div class="ui bottom attached tab segment active" data-tab="password">
+                    <div class="field">
+                        <label>Username</label>
+                        <input name="username" placeholder="Username" type="text">
+                    </div>
+                    <div class="field">
+                        <label>Password</label>
+                        <input name="password" type="password">
+                    </div>
+                    <button type="submit" name="use" value="password" class="ui fluid large green submit button">Login to Gitea</button>
+                </div>
+                <div class="ui bottom attached tab segment" data-tab="access-token">
+                    <div class="field">
+                        <label>Access Token</label>
+                        <input name="access-token" type="password">
+                    </div>
+                    <button type="submit" name="use" value="token" class="ui fluid large green submit button">Login to Gitea</button>
+                </div>
+            </div>
+
+            <div class="ui error message"></div>
+        </form>
+    </div>
+</div>
+<script>
+    $('.menu .item')
+            .tab()
+    ;
+</script>
+{{template "base/footer" .}}

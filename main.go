@@ -1,3 +1,4 @@
+//go:generate swagger generate spec -i ./swagger.yml -o ./swagger.json
 package main
 
 import (
@@ -5,8 +6,6 @@ import (
 	"os"
 
 	"github.com/urfave/cli"
-
-	"git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator/cmd"
 )
 
 var (
@@ -20,10 +19,7 @@ func main() {
 	app.Version = fmt.Sprintf("%s+%s", version, build)
 	app.Usage = "GitHub to Gitea migrator for repositories"
 	app.Description = `Migrate your GitHub repositories including issues to Gitea`
-	app.Commands = cli.Commands{
-		cmd.CmdMigrate,
-		cmd.CmdMigrateAll,
-	}
+	app.Commands = cmds
 	if err := app.Run(os.Args); err != nil {
 		panic(err)
 	}

@@ -17,13 +17,15 @@ pipeline:
     commands:
       - go get -u github.com/golang/dep/cmd/dep
       - dep ensure
+      - go get -u github.com/gobuffalo/packr/...
+      - packr -z
   test:
     image: golang:1.10
     pull: true
     environment:
       GOPATH: /go
     commands:
-      - make test
+      - make test build
   static:
     image: golang:1.10
     pull: true
@@ -40,9 +42,16 @@ pipeline:
     environment:
       GOPATH: /go
     commands:
-      - make generate-release-file release
+    - make generate-release-file release
     when:
       event: [ tag ]
+  clean:
+    image: golang:1.10
+    pull: true
+    environment:
+      GOPATH: /go
+    commands:
+      - packr clean
   gitea:
     image: plugins/gitea-release:latest
     pull: true
@@ -61,11 +70,20 @@ pipeline:
     image: plugins/docker:17.12
     secrets: [ docker_username, docker_password ]
     pull: true
-    repo: jonasfranz/gitea-github-migrator
+    repo: ggmigrator/cli
     default_tags: true
     when:
       event: [ push, tag ]
-      branch: [ master ]
+
+  docker-web:
+    image: plugins/docker:17.12
+    secrets: [ docker_username, docker_password ]
+    pull: true
+    dockerfile: Dockerfile.web
+    repo: ggmigrator/web
+    default_tags: true
+    when:
+      event: [ push, tag ]
   s3:
     image: plugins/s3:1
     pull: true

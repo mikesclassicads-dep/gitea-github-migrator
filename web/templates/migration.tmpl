@@ -1,0 +1,54 @@
+{{template "base/head" .}}
+<script src="static/js/repos-status.js"></script>
+<div class="ui middle aligned center aligned grid">
+    <div class="column big">
+        <h1 class="ui image header">
+            <div class="content">
+                Migrating Repositories...
+            </div>
+        </h1>
+        <div class="ui message">
+            Your repositories get migrated at the moment. This page refreshs automatically.
+        </div>
+        <div class="repo-progress ui progress" data-total="{{len .StatusReport.Pending}}">
+            <div class="bar"></div>
+            <div class="label">Migrating repositories</div>
+        </div>
+        <div class="ui three stackable cards" id="migration-list">
+        {{range .StatusReport.Pending}}
+            <div class="ui repo-card card" data-repo="{{.}}" data-status="pending">
+                <div class="content">
+                    <div class="header">
+                        <i class="icon github"></i>{{.}}</div>
+                </div>
+                <div class="repo-content content" data-repo="{{.}}">
+                    <div class="ui active centered inline small text loader">Pending...</div>
+                </div>
+            </div>
+        {{end}}
+        </div>
+    </div>
+</div>
+<div id="content-pending" style="display: none;">
+    <div class="ui active centered inline small text loader">Pending...</div>
+</div>
+<div id="content-nonpending" style="display: none;">
+    <div class="issue-progress ui indicating progress">
+        <div class="bar"></div>
+        <div class="label">Migrating issues</div>
+    </div>
+    <p><b class="failed-issues">0</b> migration(s) of issues failed</p>
+    <div class="comment-progress ui indicating progress">
+        <div class="bar"></div>
+        <div class="label">Migrating comments</div>
+    </div>
+    <p><b class="failed-comments">0</b> migration(s) of comments failed</p>
+</div>
+<div id="content-failed" style="display: none;">
+    <div class="ui negative message">
+        <div class="header">
+            Error while migrating
+        </div>
+        <p class="errormsg"></p>
+    </div>
+</div>

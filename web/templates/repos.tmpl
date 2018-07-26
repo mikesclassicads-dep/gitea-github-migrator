@@ -1,0 +1,77 @@
+{{template "base/head" .}}
+<script src="static/js/select-repos.js"></script>
+<div class="ui middle aligned center aligned grid">
+    <div class="column">
+        <h1 class="ui image header">
+            <div class="content">
+                Migrate Repositories
+            </div>
+        </h1>
+        <div class="ui message">
+            Select the repositories you'd like to migrate.
+        </div>
+        <div class="ui stacked segment">
+            <form action="/repos" method="POST">
+                <div class="ui horizontal link list">
+                    <a class="item" onclick="$('.repo-toggle').prop('checked', true);">
+                        Select all
+                    </a>
+                    <a class="item" onclick="$('.repo-toggle').prop('checked', false);">
+                        Deselect all
+                    </a>
+                </div>
+                <div class="ui relaxed divided list" id="repo-list">
+                {{range .Repos}}
+                    <div class="item">
+                        <i class="large github middle aligned icon"></i>
+                        <div class="content">
+                            <div class="ui left toggle checkbox">
+                                <input checked id="{{.GetFullName}}" class="repo-toggle" name="{{.GetFullName}}" type="checkbox">
+                                <label for="{{.GetFullName}}"><a class="header">{{.GetFullName}}</a></label>
+                            </div>
+                        </div>
+                    </div>
+                {{end}}
+                </div>
+                <button type="button" onclick="openSelectRepoModal();" id="open-other-btn" class="ui fluid large labeled icon button"><i class="icon add"></i> Add other repositories...</button>
+                <div class="ui divider"></div>
+                <button type="submit" class="ui fluid large green labeled icon button"><i class="icon exchange"></i> Migrate selected repositories...</button>
+            </form>
+
+        </div>
+    </div>
+</div>
+<div id="repo-item" style="display: none !important;">
+    <div class="item">
+        <i class="large github middle aligned icon"></i>
+        <div class="content">
+            <div class="ui left toggle checkbox">
+                <input checked id="FULL_REPO_NAME" name="FULL_REPO_NAME" type="checkbox">
+                <label for="FULL_REPO_NAME"><a class="header">FULL_REPO_NAME</a></label>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="ui modal" id="add-repos">
+    <div class="header">Add other repositories...</div>
+    <div class="content">
+        <div class="ui small icon message"><i class="icon code"></i>
+            <div class="content">
+                Please add all repositories you'd like to add in the box below. Write
+                each repository in a separate line and split the repository owner and name with a "/".
+            </div>
+        </div>
+        <div class="ui form">
+            <div class="field">
+                <label>Line seperated list of repositories</label>
+                <textarea id="repo-textform" placeholder="go-gitea/gitea&#10;go-gitea/git"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="actions">
+        <div id="add-repos-btn" class="ui approve green button">Add</div>
+        <div class="ui cancel button">Cancel</div>
+    </div>
+</div>
+{{template "base/footer" .}}
