@@ -10,6 +10,7 @@ import (
 	"git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator/migrations"
 	"github.com/go-macaron/session"
 	"github.com/google/go-github/github"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
 	"gopkg.in/macaron.v1"
 )
@@ -56,9 +57,12 @@ func (ctx *Context) Handle(status int, title string, err error) {
 			ctx.Data["ErrorMsg"] = err
 		}
 	}
+	logrus.Warnf("Handle: %v", err)
 	ctx.Data["ErrTitle"] = title
 
 	switch status {
+	case 403:
+		ctx.Data["Title"] = "Access denied"
 	case 404:
 		ctx.Data["Title"] = "Page not found"
 	case 500:

@@ -18,10 +18,18 @@ var CmdWeb = cli.Command{
 	Name:   "web",
 	Usage:  "Starts the web interface",
 	Action: runWeb,
+	Flags: []cli.Flag{
+		cli.StringFlag{
+			Name:   "c,config",
+			Usage:  "config file",
+			Value:  "config.yml",
+			EnvVar: "MIGRATOR_CONFIG",
+		},
+	},
 }
 
-func runWeb(_ *cli.Context) error {
-	if err := configor.New(&configor.Config{ErrorOnUnmatchedKeys: true}).Load(&config.Config, "config.yml"); err != nil {
+func runWeb(ctx *cli.Context) error {
+	if err := configor.New(&configor.Config{ErrorOnUnmatchedKeys: true}).Load(&config.Config, ctx.String("config")); err != nil {
 		return err
 	}
 	r := web.InitRoutes()

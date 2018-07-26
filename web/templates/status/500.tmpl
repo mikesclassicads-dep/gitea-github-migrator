@@ -1,0 +1,14 @@
+{{template "base/head" .}}
+<div class="ui middle aligned center aligned grid">
+    <div class="column">
+        <h1 class="ui image header">
+            <div class="content">
+                Error 500 - Internal Server Error
+            </div>
+        </h1>
+        <div class="ui error message">
+        {{.ErrTitle}}
+        </div>
+    </div>
+</div>
+{{template "base/footer" .}}

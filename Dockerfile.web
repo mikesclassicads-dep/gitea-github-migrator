@@ -8,11 +8,16 @@ RUN apk --no-cache add build-base git ca-certificates
 COPY . ${GOPATH}/src/git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator
 WORKDIR ${GOPATH}/src/git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator
 
-RUN make docker-binary
+RUN make clean docker-binary-web
 
 FROM alpine:3.7
 LABEL maintainer="info@jonasfranz.software"
 
 COPY --from=build-env /go/src/git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator/gitea-github-migrator /usr/local/bin/gitea-github-migrator
 
-ENTRYPOINT ["/usr/local/bin/gitea-github-migrator"]
+VOLUME "/data"
+VOLUME "/usr/local/bin/data"
+
+COPY --from=build-env /go/src/git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator/config.example.yml /data/config.example.yml
+
+ENTRYPOINT ["/usr/local/bin/gitea-github-migrator", "web", "-c", "/data/config.yml"]
