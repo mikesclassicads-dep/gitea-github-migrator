@@ -18,6 +18,7 @@ LDFLAGS := -X main.version=$(VERSION) -X main.build=$(DRONE_BUILD_NUMBER)
 all:
 
 .PHONY: build
+build:
 	go build -ldflags "$(LDFLAGS)" -o gitea-github-migrator
 
 .PHONY: build-binary-web
