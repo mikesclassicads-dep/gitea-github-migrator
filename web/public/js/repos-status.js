@@ -51,6 +51,8 @@ function handleData(data) {
         }
         content.find(".comment-progress").progress('set progress', report.migrated_comments + report.failed_comments);
         content.find(".issue-progress").progress('set progress', report.migrated_issues + report.failed_issues);
+        content.find('.log-content').val(report.log);
+        content.find('.log-content').scrollTop(content.find('.log-content')[0].scrollHeight)
     });
     forEach(data.finished, function (repo, report) {
         var content = handleNonPending(repo, report);
@@ -64,6 +66,7 @@ function handleData(data) {
         content.find(".issue-progress").progress('set progress', report.migrated_issues + report.failed_issues);
         content.find(".issue-progress").progress('complete');
         content.find(".comment-progress").progress('complete');
+        content.find('.log-content').val(report.log);
     });
 }
 function forEach(object, callback) {
@@ -78,6 +81,7 @@ function handleNonPending(repo, report) {
     var content = contentFromRepo(repo);
     if(!content.hasClass("non-pending")) {
         content.html(renderNonPending().html());
+        content.find(".accordion").accordion();
         content.find(".issue-progress").progress({
             text: {
                 active  : 'Migrated {value} of {total} issues',

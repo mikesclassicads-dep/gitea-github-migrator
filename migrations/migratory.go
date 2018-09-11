@@ -44,4 +44,5 @@ type MigratoryStatus struct {
 
 	// FatalError should only be used if stage == failed; indicates which fatal error occurred
 	FatalError error
+	Log        string `json:"log"`
 }

@@ -1,10 +1,10 @@
-//go:generate swagger generate spec -i ./swagger.yml -o ./swagger.json
 package main
 
 import (
 	"fmt"
 	"os"
 
+	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
 
@@ -21,6 +21,6 @@ func main() {
 	app.Description = `Migrate your GitHub repositories including issues to Gitea`
 	app.Commands = cmds
 	if err := app.Run(os.Args); err != nil {
-		panic(err)
+		logrus.Panic(err)
 	}
 }

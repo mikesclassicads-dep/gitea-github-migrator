@@ -43,6 +43,5 @@ func runWeb(ctx *cli.Context) error {
 		port = 4000
 	}
 	logrus.Infof("Server is running at http://%s:%d", hostname, port)
-	logrus.SetLevel(logrus.PanicLevel)
 	return http.ListenAndServe(fmt.Sprintf("%s:%d", hostname, port), r)
 }

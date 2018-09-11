@@ -14,7 +14,7 @@
             <div class="bar"></div>
             <div class="label">Migrating repositories</div>
         </div>
-        <div class="ui three stackable cards" id="migration-list">
+        <div class="ui two stackable cards" id="migration-list">
         {{range .StatusReport.Pending}}
             <div class="ui repo-card card" data-repo="{{.}}" data-status="pending">
                 <div class="content">
@@ -43,6 +43,19 @@
         <div class="label">Migrating comments</div>
     </div>
     <p><b class="failed-comments">0</b> migration(s) of comments failed</p>
+    <div class="ui accordion" onload="$(this).accordion();">
+        <div class="title">
+            <i class="dropdown icon"></i>
+            View Log
+        </div>
+        <div class="content">
+            <div class="ui form">
+                <div class="ui field">
+                    <textarea title="Log content" class="log-content" readonly></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <div id="content-failed" style="display: none;">
     <div class="ui negative message">
