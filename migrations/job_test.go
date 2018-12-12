@@ -10,9 +10,11 @@ import (
 func TestJob_StatusReport(t *testing.T) {
 	jobWithStatus := func(status *MigratoryStatus) *Job {
 		return &Job{
-			migratories: map[string]*Migratory{
+			migratories: map[string]*FetchMigratory{
 				"test/test": {
-					Status: status,
+					Migratory: Migratory{
+						Status: status,
+					},
 				},
 			},
 			Repositories: []string{
