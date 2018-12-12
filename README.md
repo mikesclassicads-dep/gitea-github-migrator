@@ -4,6 +4,9 @@
 [![Latest Release](https://img.shields.io/badge/dynamic/json.svg?label=release&url=https%3A%2F%2Fgit.jonasfranz.software%2Fapi%2Fv1%2Frepos%2FJonasFranzDEV%2Fgitea-github-migrator%2Freleases&query=%24%5B0%5D.tag_name)](https://git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator/releases)
 [![Docker Pulls](https://img.shields.io/docker/pulls/ggmigrator/cli.svg)](https://hub.docker.com/r/ggmigrator/cli/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/ggmigrator/web.svg)](https://hub.docker.com/r/ggmigrator/web/)
+[![Go Report Card](https://goreportcard.com/badge/git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator)](https://goreportcard.com/report/git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator)
+[![GoDoc](https://godoc.org/git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator?status.svg)](https://godoc.org/git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator)
+
 
 A tool to migrate [GitHub](https://github.com) Repositories to [Gitea](https://gitea.io) including all issues, labels, milestones
 and comments.
