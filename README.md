@@ -6,7 +6,7 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/ggmigrator/web.svg)](https://hub.docker.com/r/ggmigrator/web/)
 [![Go Report Card](https://goreportcard.com/badge/git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator)](https://goreportcard.com/report/git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator)
 [![GoDoc](https://godoc.org/git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator?status.svg)](https://godoc.org/git.jonasfranz.software/JonasFranzDEV/gitea-github-migrator)
-
+[![Coverage Status](https://coverage.jonasfranz.software/projects/1/badge.svg)](https://coverage.jonasfranz.software/projects/1)
 
 A tool to migrate [GitHub](https://github.com) Repositories to [Gitea](https://gitea.io) including all issues, labels, milestones
 and comments.

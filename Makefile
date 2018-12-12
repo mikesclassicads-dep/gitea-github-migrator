@@ -81,4 +81,10 @@ vet:
 .PHONY: test
 test: lint vet
 	go test -tags web -cover ./...
-	
+
+.PHONY: coverage
+coverage:
+	@hash goveralls > /dev/null 2>&1; if [ $$? -ne 0 ]; then \
+		$(GO) get -u github.com/mattn/goveralls; \
+	fi
+	goveralls -service=drone.io -endpoint=https://coverage.jonasfranz.software

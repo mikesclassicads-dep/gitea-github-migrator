@@ -26,6 +26,14 @@ pipeline:
       GOPATH: /go
     commands:
       - make test build
+  coverage:
+    image: golang:1.10
+    pull: true
+    environment:
+      GOPATH: /go
+    secrets: [ coveralls_token ]
+    commands:
+      - make coverage
   static:
     image: golang:1.10
     pull: true
