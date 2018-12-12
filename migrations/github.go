@@ -99,10 +99,8 @@ func (fm *FetchMigratory) MigrateFromGitHub() error {
 					"repo": fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
 				}).Errorf("migration failed: %v", fm.Status.FatalError)
 				return err
-			} else {
-				comments = *cmts
 			}
-
+			comments = *cmts
 			if err != nil {
 				fm.Status.Stage = Failed
 				fm.Status.FatalError = err
