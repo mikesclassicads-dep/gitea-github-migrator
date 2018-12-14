@@ -53,110 +53,8 @@ func (fm *FetchMigratory) MigrateFromGitHub() error {
 		"repo": fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
 	}).Info("git repository migrated")
 	if fm.Options.Issues || fm.Options.PullRequests {
-		var commentsChan chan *[]*github.IssueComment
-		if fm.Options.Comments {
-			commentsChan = fm.fetchCommentsAsync()
-		}
-		issues, err := fm.FetchIssues()
-		if err != nil {
-			fm.Status.Stage = Failed
-			fm.Status.FatalError = err
-			fm.Logger.WithFields(logrus.Fields{
-				"repo": fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
-			}).Errorf("migration failed: %v", fm.Status.FatalError)
+		if err := fm.MigrateIssuesFromGitHub(); err != nil {
 			return err
-		}
-		fm.Status.Stage = Migrating
-		fm.Status.Issues = int64(len(issues))
-		migratedIssues := make(map[int]*gitea.Issue)
-		for _, issue := range issues {
-			if (!issue.IsPullRequest() || fm.Options.PullRequests) &&
-				(issue.IsPullRequest() || fm.Options.Issues) {
-				migratedIssues[issue.GetNumber()], err = fm.Issue(issue)
-				if err != nil {
-					fm.Status.IssuesError++
-					fm.Logger.WithFields(logrus.Fields{
-						"repo":  fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
-						"issue": issue.GetNumber(),
-					}).Warnf("error while migrating: %v", err)
-					continue
-				}
-				fm.Status.IssuesMigrated++
-				fm.Logger.WithFields(logrus.Fields{
-					"repo":  fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
-					"issue": issue.GetNumber(),
-				}).Info("issue migrated")
-			} else {
-				fm.Status.Issues--
-			}
-		}
-		if fm.Options.Comments {
-			var comments []*github.IssueComment
-			if cmts := <-commentsChan; cmts == nil {
-				fm.Status.Stage = Failed
-				err := fmt.Errorf("error while fetching issue comments")
-				fm.Logger.WithFields(logrus.Fields{
-					"repo": fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
-				}).Errorf("migration failed: %v", fm.Status.FatalError)
-				return err
-			} else {
-				comments = *cmts
-			}
-			if err != nil {
-				fm.Status.Stage = Failed
-				fm.Status.FatalError = err
-				fm.Logger.WithFields(logrus.Fields{
-					"repo": fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
-				}).Errorf("migration failed: %v", fm.Status.FatalError)
-				return err
-			}
-			fm.Status.Comments = int64(len(comments))
-			commentsByIssue := make(map[*gitea.Issue][]*github.IssueComment, len(migratedIssues))
-			for _, comment := range comments {
-				issueIndex, err := getIssueIndexFromHTMLURL(comment.GetHTMLURL())
-				if err != nil {
-					fm.Status.CommentsError++
-					fm.Logger.WithFields(logrus.Fields{
-						"repo":    fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
-						"issue":   issueIndex,
-						"comment": comment.GetID(),
-					}).Warnf("error while migrating comment: %v", err)
-					continue
-				}
-				if issue, ok := migratedIssues[issueIndex]; ok && issue != nil {
-					if list, ok := commentsByIssue[issue]; !ok && list != nil {
-						commentsByIssue[issue] = []*github.IssueComment{comment}
-					} else {
-						commentsByIssue[issue] = append(list, comment)
-					}
-				} else {
-					fm.Status.CommentsError++
-					continue
-				}
-			}
-			wg := sync.WaitGroup{}
-			for issue, comms := range commentsByIssue {
-				wg.Add(1)
-				go func(i *gitea.Issue, cs []*github.IssueComment) {
-					for _, comm := range cs {
-						if _, err := fm.IssueComment(i, comm); err != nil {
-							fm.Status.CommentsError++
-							fm.Logger.WithFields(logrus.Fields{
-								"repo":    fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
-								"comment": comm.GetID(),
-							}).Warnf("error while migrating comment: %v", err)
-							continue
-						}
-						fm.Status.CommentsMigrated++
-						fm.Logger.WithFields(logrus.Fields{
-							"repo":    fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
-							"comment": comm.GetID(),
-						}).Info("comment migrated")
-					}
-					wg.Done()
-				}(issue, comms)
-			}
-			wg.Wait()
 		}
 	}
 	if fm.Status.FatalError != nil {
@@ -171,6 +69,120 @@ func (fm *FetchMigratory) MigrateFromGitHub() error {
 		"repo": fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
 	}).Info("migration successful")
 	return nil
+}
+
+// MigrateIssuesFromGitHub migrates all issues from GitHub to Gitea
+func (fm *FetchMigratory) MigrateIssuesFromGitHub() error {
+	var commentsChan chan *[]*github.IssueComment
+	if fm.Options.Comments {
+		commentsChan = fm.fetchCommentsAsync()
+	}
+	issues, err := fm.FetchIssues()
+	if err != nil {
+		fm.Status.Stage = Failed
+		fm.Status.FatalError = err
+		fm.Logger.WithFields(logrus.Fields{
+			"repo": fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
+		}).Errorf("migration failed: %v", fm.Status.FatalError)
+		return err
+	}
+	fm.Status.Stage = Migrating
+	fm.Status.Issues = int64(len(issues))
+	migratedIssues := make(map[int]*gitea.Issue)
+	for _, issue := range issues {
+		if (!issue.IsPullRequest() || fm.Options.PullRequests) &&
+			(issue.IsPullRequest() || fm.Options.Issues) {
+			migratedIssues[issue.GetNumber()], err = fm.Issue(issue)
+			if err != nil {
+				fm.Status.IssuesError++
+				fm.Logger.WithFields(logrus.Fields{
+					"repo":  fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
+					"issue": issue.GetNumber(),
+				}).Warnf("error while migrating: %v", err)
+				continue
+			}
+			fm.Status.IssuesMigrated++
+			fm.Logger.WithFields(logrus.Fields{
+				"repo":  fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
+				"issue": issue.GetNumber(),
+			}).Info("issue migrated")
+		} else {
+			fm.Status.Issues--
+		}
+	}
+	if fm.Options.Comments {
+		return fm.MigrateCommentsFromGitHub()
+	}
+	return nil
+}
+
+func (fm *FetchMigratory) MigrateCommentsFromGitHub() error {
+	var comments []*github.IssueComment
+	var cmts *[]*github.IssueComment
+	if cmts = <-commentsChan; cmts == nil {
+		fm.Status.Stage = Failed
+		err := fmt.Errorf("error while fetching issue comments")
+		fm.Logger.WithFields(logrus.Fields{
+			"repo": fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
+		}).Errorf("migration failed: %v", fm.Status.FatalError)
+		return err
+	}
+	comments = *cmts
+	if err != nil {
+		fm.Status.Stage = Failed
+		fm.Status.FatalError = err
+		fm.Logger.WithFields(logrus.Fields{
+			"repo": fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
+		}).Errorf("migration failed: %v", fm.Status.FatalError)
+		return err
+	}
+	fm.Status.Comments = int64(len(comments))
+	commentsByIssue := make(map[*gitea.Issue][]*github.IssueComment, len(migratedIssues))
+	for _, comment := range comments {
+		issueIndex, err := getIssueIndexFromHTMLURL(comment.GetHTMLURL())
+		if err != nil {
+			fm.Status.CommentsError++
+			fm.Logger.WithFields(logrus.Fields{
+				"repo":    fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
+				"issue":   issueIndex,
+				"comment": comment.GetID(),
+			}).Warnf("error while migrating comment: %v", err)
+			continue
+		}
+		if issue, ok := migratedIssues[issueIndex]; ok && issue != nil {
+			if list, ok := commentsByIssue[issue]; !ok && list != nil {
+				commentsByIssue[issue] = []*github.IssueComment{comment}
+			} else {
+				commentsByIssue[issue] = append(list, comment)
+			}
+		} else {
+			fm.Status.CommentsError++
+			continue
+		}
+	}
+	wg := sync.WaitGroup{}
+	for issue, comms := range commentsByIssue {
+		wg.Add(1)
+		go func(i *gitea.Issue, cs []*github.IssueComment) {
+			for _, comm := range cs {
+				if _, err := fm.IssueComment(i, comm); err != nil {
+					fm.Status.CommentsError++
+					fm.Logger.WithFields(logrus.Fields{
+						"repo":    fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
+						"comment": comm.GetID(),
+					}).Warnf("error while migrating comment: %v", err)
+					continue
+				}
+				fm.Status.CommentsMigrated++
+				fm.Logger.WithFields(logrus.Fields{
+					"repo":    fmt.Sprintf("%s/%s", fm.RepoOwner, fm.RepoName),
+					"comment": comm.GetID(),
+				}).Info("comment migrated")
+			}
+			wg.Done()
+		}(issue, comms)
+	}
+	wg.Wait()
 }
 
 var issueIndexRegex = regexp.MustCompile(`/(issues|pull)/([0-9]+)#`)

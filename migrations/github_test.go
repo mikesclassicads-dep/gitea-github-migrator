@@ -17,7 +17,7 @@ func TestGetIssueIndexFromHTMLURLAlt(t *testing.T) {
 	res, err := getIssueIndexFromHTMLURLAlt("https://github.com/octocat/Hello-World/issues/1347#issuecomment-1")
 	assert.NoError(t, err)
 	assert.Equal(t, 1347, res)
-	res, err = getIssueIndexFromHTMLURLAlt("https://github.com/oment-1")
+	_, err = getIssueIndexFromHTMLURLAlt("https://github.com/oment-1")
 	assert.Error(t, err)
 }
 
@@ -31,7 +31,7 @@ func TestGetIssueIndexFromHTMLURL(t *testing.T) {
 	res, err := getIssueIndexFromHTMLURL("https://github.com/octocat/Hello-World/issues/1347#issuecomment-1")
 	assert.NoError(t, err)
 	assert.Equal(t, 1347, res)
-	res, err = getIssueIndexFromHTMLURL("https://github.com/oment-1")
+	_, err = getIssueIndexFromHTMLURL("https://github.com/oment-1")
 	assert.Error(t, err)
 }
 

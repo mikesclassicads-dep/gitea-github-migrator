@@ -74,12 +74,19 @@ lint:
 	fi
 	golint -set_exit_status $(go list ./...)
 
+.PHONY: ineffassign
+ineffassign:
+	@hash ineffassign > /dev/null 2>&1; if [ $$? -ne 0 ]; then \
+		$(GO) get -u github.com/gordonklaus/ineffassign; \
+	fi
+	ineffassign .
+
 .PHONY: vet
 vet:
 	go vet ./...
 
 .PHONY: test
-test: lint vet
+test: lint vet ineffassign
 	go test -tags web -cover ./...
 
 .PHONY: coverage
