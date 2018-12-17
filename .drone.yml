@@ -15,6 +15,7 @@ pipeline:
     environment:
       GOPATH: /go
     commands:
+      - apk --no-cache add git
       - go get -u github.com/golang/dep/cmd/dep
       - dep ensure
       - go get -u github.com/gobuffalo/packr/...
