@@ -10,26 +10,24 @@ clone:
 
 pipeline:
   deps:
-    image: golang:1.11.2-alpine
+    image: golang:1.11.2
     pull: true
     environment:
       GOPATH: /go
     commands:
-      - apk --no-cache add git
       - go get -u github.com/golang/dep/cmd/dep
       - dep ensure
       - go get -u github.com/gobuffalo/packr/...
       - packr -z
   test:
-    image: golang:1.11.2-alpine
+    image: golang:1.11.2
     pull: true
     environment:
       GOPATH: /go
     commands:
-      - apk --no-cache add make git gcc
       - make test build
   coverage:
-    image: golang:1.11.2-alpine
+    image: golang:1.11.2
     pull: true
     environment:
       GOPATH: /go
@@ -37,28 +35,26 @@ pipeline:
     commands:
       - make coverage
   static:
-    image: golang:1.11.2-alpine
+    image: golang:1.11.2
     pull: true
     environment:
       GOPATH: /go
     commands:
-      - apk --no-cache add make git gcc
       - make generate-release-file release
     when:
       event: [ push ]
       branch: [ master ]
   static:
-    image: golang:1.11.2-alpine
+    image: golang:1.11.2
     pull: true
     environment:
       GOPATH: /go
     commands:
-      - apk --no-cache add make git gcc
       - make generate-release-file release
     when:
       event: [ tag ]
   clean:
-    image: golang:1.11.2-alpine
+    image: golang:1.11.2
     pull: true
     environment:
       GOPATH: /go
