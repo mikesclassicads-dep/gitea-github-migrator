@@ -26,6 +26,7 @@ pipeline:
     environment:
       GOPATH: /go
     commands:
+      - apk --no-cache add make
       - make test build
   coverage:
     image: golang:1.11.2-alpine
@@ -41,6 +42,7 @@ pipeline:
     environment:
       GOPATH: /go
     commands:
+      - apk --no-cache add make
       - make generate-release-file release
     when:
       event: [ push ]
@@ -51,7 +53,8 @@ pipeline:
     environment:
       GOPATH: /go
     commands:
-    - make generate-release-file release
+      - apk --no-cache add make
+      - make generate-release-file release
     when:
       event: [ tag ]
   clean:
