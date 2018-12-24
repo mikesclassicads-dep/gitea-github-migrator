@@ -49,7 +49,7 @@ func TestFetchMigratory_FetchIssues(t *testing.T) {
 }
 
 func TestFetchMigratory_FetchComments(t *testing.T) {
-	comments, err := testFMig.FetchIssues()
+	comments, err := testFMig.FetchComments()
 	assert.NoError(t, err)
 	assert.True(t, len(comments) > 0, "at least one comment found")
 }
