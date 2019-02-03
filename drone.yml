@@ -122,5 +122,5 @@ pipeline:
 
 services:
   gitea:
-    image: jonasfranz/gitea-service
+    image: jonasfranz/gitea-service:latest
     pull: true
