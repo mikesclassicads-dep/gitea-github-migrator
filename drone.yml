@@ -10,7 +10,7 @@ clone:
 
 pipeline:
   deps:
-    image: golang:1.11.2
+    image: golang:1.11.5
     pull: true
     environment:
       GOPATH: /go
@@ -20,14 +20,14 @@ pipeline:
       - go get -u github.com/gobuffalo/packr/...
       - packr -z
   test:
-    image: golang:1.11.2
+    image: golang:1.11.5
     pull: true
     environment:
       GOPATH: /go
     commands:
       - make test build
   coverage:
-    image: golang:1.11.2
+    image: golang:1.11.5
     pull: true
     environment:
       GOPATH: /go
@@ -35,7 +35,7 @@ pipeline:
     commands:
       - make coverage
   static:
-    image: golang:1.11.2
+    image: golang:1.11.5
     pull: true
     environment:
       GOPATH: /go
@@ -45,7 +45,7 @@ pipeline:
       event: [ push ]
       branch: [ master ]
   static:
-    image: golang:1.11.2
+    image: golang:1.11.5
     pull: true
     environment:
       GOPATH: /go
@@ -54,7 +54,7 @@ pipeline:
     when:
       event: [ tag ]
   clean:
-    image: golang:1.11.2
+    image: golang:1.11.5
     pull: true
     environment:
       GOPATH: /go
