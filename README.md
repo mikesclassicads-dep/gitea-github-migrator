@@ -11,6 +11,12 @@
 A tool to migrate [GitHub](https://github.com) Repositories to [Gitea](https://gitea.io) including all issues, labels, milestones
 and comments.
 
+
+# IMPORTANT
+
+This repository got moved to the offical Gitea server and will be developed there. -> https://gitea.com/gitea/migrator/
+There will be some big changes on how the migrator works in order to improve the performance and the result of a migration.
+
 ## Features
 
 Migrates:
